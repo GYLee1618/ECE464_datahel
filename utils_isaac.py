@@ -53,12 +53,40 @@
 		return result
 
 
-	def get_prof_info(self,pid):
+	def get_prof_info(self,uid):
+		prof_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
+										self.professors.dept,self.professors.salary).select_from(self.users).join(self.professors)
+										.filter(self.users.uid==uid)
+		return prof_info
 
-		raise NotImplementedError
-
-	def get_student_info(self,sid):
-		raise NotImplementedError
+	def get_student_info(self,uid):
+		stud_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
+										self.students.major,self.students.graduation).select_from(self.users).join(self.students)
+										.filter(self.users.uid==uid)
+		return stud_info
+		
 
 	def get_admin_info(self,uid):
-		raise NotImplementedError
+		admin_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
+										).select_from(self.users).join(self.administrators)
+										.filter(self.users.uid==uid)
+		return admin_info
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
