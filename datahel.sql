@@ -1,4 +1,4 @@
-CREATE TABLE students ( uid INT,
+CREATE TABLE users(uid int NOT NULL AUTO_INCREMENT,
 	ssn INT, 
 	uname CHAR(30) NOT NULL,
 	password CHAR(32) NOT NULL,
@@ -6,41 +6,33 @@ CREATE TABLE students ( uid INT,
 	email CHAR(30),
 	address CHAR(64),
 	date_of_birth DATETIME,
-	major CHAR(32),
 	PRIMARY KEY (uid),
 	UNIQUE (ssn),
-	UNIQUE (email)
+	UNIQUE (email))
+
+CREATE TABLE students ( sid INT NOT NULL AUTO_INCREMENT,
+	uid INT,
+	major CHAR(32),
+	graduation CHAR(32),
+	FOREIGN KEY (uid) REFERENCES users,
+	PRIMARY KEY(sid)
 );
 
-CREATE TABLE professors ( uid INT,
-	ssn INT, 
-	uname CHAR(30) NOT NULL,
-	password CHAR(32) NOT NULL,
-	name CHAR(30) NOT NULL,
-	email CHAR(30),
-	address CHAR(64),
-	date_of_birth DATETIME,
+CREATE TABLE professors ( pid INT NOT NULL AUTO_INCREMENT,
+	uid INT,
 	department CHAR(32),
 	salary FLOAT,
-	UNIQUE(ssn),
-	UNIQUE(email),
-	PRIMARY KEY (uid)
+	FOREIGN KEY (uid) REFERENCES users,
+	PRIMARY KEY (pid)
 );
 
-CREATE TABLE administrators ( uid INT,
-	ssn INT, 
-	uname CHAR(30) NOT NULL,
-	password CHAR(32) NOT NULL,
-	name CHAR(30) NOT NULL,
-	email CHAR(30),
-	address CHAR(64),
-	Dob DATETIME,
-	UNIQUE(ssn),
-	UNIQUE(email),
-	PRIMARY KEY (uid)
+CREATE TABLE administrators ( aid INT NOT NULL AUTO_INCREMENT,
+	uid INT,
+	FOREIGN KEY (uid) REFERENCES users,
+	PRIMARY KEY (aid)
 );
 
-CREATE TABLE classes(cid INT,
+CREATE TABLE classes(cid INT NOT NULL,
 	name CHAR(16),	
 	semester CHAR(16),
 	meeting_times CHAR(32),
@@ -50,46 +42,31 @@ CREATE TABLE classes(cid INT,
 	PRIMARY KEY (cid)
 );
 
-CREATE TABLE teaching ( teid INT,
+CREATE TABLE teaching ( teid INT  NOT NULL AUTO_INCREMENT,
 	pid INT,
 	cid INT,
 	PRIMARY KEY (teid),
-	FOREIGN KEY (pid) REFERENCES professors(uid),
+	FOREIGN KEY (pid) REFERENCES professors(pid),
 	FOREIGN KEY (cid) REFERENCES classes(cid)
 );
 
-CREATE TABLE taking ( taid INT,
+CREATE TABLE taking ( taid INT NOT NULL AUTO_INCREMENT,
 	sid INT,
 	cid INT,
 	grade FLOAT,
 	PRIMARY KEY (taid),
 	FOREIGN KEY (cid) REFERENCES classes(cid),
-	FOREIGN KEY (sid) REFERENCES students(uid),
+	FOREIGN KEY (sid) REFERENCES students(sid),
 	CHECK (grade <= 4),
 	CHECK (grade >= 0)
 );
 
 
+insert into users values (0, '605349104', 'mhes', 'QI9d0qIceG', 'Margaret Hes', 'mhes@cooper.edu', '5402 Pankowski St, Houston, TX 77036', '19980829');
+insert into students values (0, 0, 'Architecture', )
+
 insert into students values (252, '605349104', 'mhes', 'QI9d0qIceG', 'Margaret Hes', 'mhes@cooper.edu', '5402 Pankowski St, Houston, TX 77036', '19980829', 'Architecture');
 insert into students values (2564, '139840649', 'eangerho', '57NIoGgRXp', 'Elizabeth Angerhofer', 'eangerho@cooper.edu', '240 Vantuyle St, Pittsfield, MA 01201', '19990112', 'Electrical Engineering');
-insert into students values (2010, '879595753', 'maug', 'R4Mzmm0wom', 'Michelle Aug', 'maug@cooper.edu', '9210 Living St, Frankfort, KY 40601', '19970322', 'Mechanical Engineering');
-insert into students values (2386, '767224003', 'cmcgrath', 'aS1XRGAvmv', 'Christine Mcgrath', 'cmcgrath@cooper.edu', '9143 Hestand St, Yonkers, NY 10701', '19970604', 'General Engineering');
-insert into students values (249, '411454262', 'avolstad', 'di5uwipSsL', 'Amy Volstad', 'avolstad@cooper.edu', '8505 Bennet St, Marysville, WA 98270', '19990313', 'Civil Engineering');
-insert into students values (2750, '837999040', 'sbenik', 'MresNmh8O5', 'Sarah Benik', 'sbenik@cooper.edu', '7057 Wykoff St, Lehi, UT 84043', '19990124', 'Architecture');
-insert into students values (695, '782611623', 'nplan', 'dHz8LPP6Dr', 'Nathan Plan', 'nplan@cooper.edu', '7856 Schaake St, Mesquite, TX 75150', '19970609', 'Mechanical Engineering');
-insert into students values (1058, '767372672', 'jkrank', '8dIPYhXCUA', 'Justin Krank', 'jkrank@cooper.edu', '3589 Chopin St, Lakeville, MN 55044', '19971029', 'Civil Engineering');
-insert into students values (625, '116678078', 'nrodecap', 'gZk3mO0XPf', 'Nicole Rodecap', 'nrodecap@cooper.edu', '565 Sakin St, Brooklyn, NY 11238', '19970524', 'General Engineering');
-insert into students values (1268, '911305901', 'alundgre', '8MH8z3J7Oy', 'Angela Lundgren', 'alundgre@cooper.edu', '9232 Lacelle St, Simi Valley, CA 93063', '20000807', 'Art');
-insert into students values (3441, '393036039', 'sbunte', 'RNSNXhcY6e', 'Samantha Bunte', 'sbunte@cooper.edu', '3296 Delille St, Albuquerque, NM 87114', '19991217', 'Art');
-insert into students values (2366, '941859822', 'mdansky', 'T6I8iTPW11', 'Mary Dansky', 'mdansky@cooper.edu', '9026 Sandoval St, Indio, CA 92201', '19980811', 'Civil Engineering');
-insert into students values (2019, '992461574', 'kmasotto', 'qLe4TbRkoJ', 'Kenneth Masotto', 'kmasotto@cooper.edu', '368 Kawlewski St, New York, NY 10033', '19990131', 'Architecture');
-insert into students values (1134, '795080774', 'cnimer', 'ht3sidHTGg', 'Christine Nimer', 'cnimer@cooper.edu', '1439 Illes St, Winter Garden, FL 34787', '19990614', 'Art');
-insert into students values (1207, '370551886', 'bschenbe', 'sRI2Xar1uq', 'Brenda Schenberg', 'bschenbe@cooper.edu', '4103 Strini St, Aurora, IL 60506', '20000124', 'Electrical Engineering');
-insert into students values (1564, '571885944', 'mkuik', 'R4FJ3cZYzk', 'Michelle Kuik', 'mkuik@cooper.edu', '8308 Kilberg St, Lake Worth, FL 33463', '19990704', 'Art');
-insert into students values (1061, '198156381', 'rprati', 'BImbTbhAIC', 'Rebecca Prati', 'rprati@cooper.edu', '7256 Kincade St, Buckeye, AZ 85326', '20000927', 'Chemical Engineering');
-insert into students values (2967, '896406751', 'mcancell', 'W6pK9XofgY', 'Melissa Cancelli', 'mcancell@cooper.edu', '5543 Vacher St, Columbia, MO 65202', '20000404', 'Mechanical Engineering');
-insert into students values (2748, '458257850', 'bveenker', 'qo9siGKDHK', 'Brandon Veenker', 'bveenker@cooper.edu', '344 Grinter St, Vista, CA 92084', '19990429', 'Chemical Engineering');
-insert into students values (2411, '906533061', 'bpeckman', 'OmDADiLyQv', 'Benjamin Peckman', 'bpeckman@cooper.edu', '3796 Sallis St, Bothell, WA 98012', '20000901', 'General Engineering');
 
 insert into professors values (825, '704452583', 'jlyrek', '4qIvktm7mV', 'James Lyrek', 'jlyrek@cooper.edu', '7543 Koomen St, Augusta, GA 30906', '19990327', 'Architecture', 132450.8);
 insert into professors values (2460, '916460110', 'kfoxhall', 'tTprsmnXhf', 'Kyle Foxhall', 'kfoxhall@cooper.edu', '5034 Wiitanen St, Fullerton, CA 92833', '20000121', 'Physics', 52543.89);
