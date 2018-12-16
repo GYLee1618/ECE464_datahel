@@ -192,7 +192,7 @@ class DBManager:
 
 	def get_prof_info(self,uid):
 		prof_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth,
-										self.professors.dept,self.professors.salary).select_from(self.users).join(self.professors).filter(
+										self.professors.department,self.professors.salary).select_from(self.users).join(self.professors).filter(
 										self.users.uid==uid)
 		return prof_info
 
