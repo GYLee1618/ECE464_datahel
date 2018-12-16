@@ -71,7 +71,7 @@ class DBManager:
 		new_student = self.students(sid=None, uid=uid, major=major, graduation=grad)
 		self.session.add(new_student)
 		self.session.commit()
-		return uname, email, password
+		return uid, uname, email, password
 
 	def new_professor(self,ssn, name, address, DOB, department, salary, uid=None):
 		if uid:
@@ -135,18 +135,20 @@ class DBManager:
 		return self.session.query(self.users).select_from(self.users).join(utable).filter(self.users.uname==uname).filter(self.users.password==pwd).scalar() is not None 
 
 	def enrol(self,uid,cid):
-	seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid).one()
-	totalseats = self.session.query(self.classes.max_students).filter(self.taking.cid==cid).one()
-	if totalseats - seatstaken > 0:
-		new_taking = self.taking(taid = None,uid=uid,cid=cid)
-		self.session.add(new_taking)
-		try:
-			self.session.commit()
-			return
-		except MySQLdb.Error, e:
-    		return e.args
-	else:
-		raise ValueError("No more Seats Available: Not Enrolled")
+		import pdb
+		pdb.set_trace()
+		seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid).scalar()
+		totalseats = self.session.query(self.classes.max_students).filter(self.classes.cid==cid).scalar()
+		if totalseats - seatstaken > 0:
+			new_taking = self.taking(taid = None,sid=uid,cid=cid)
+			self.session.add(new_taking)
+			try:
+				self.session.commit()
+				return
+			except MySQLdb.Error, e:
+				return e.args
+		else:
+			raise ValueError("No more Seats Available: Not Enrolled")
 
 	def drop(self,uid,cid):
 		obj = self.session.query(self.taking).filter(self.taking.sid==uid).filter(self.taking.cid==cid).one()
@@ -166,54 +168,49 @@ class DBManager:
 
 	def get_schedule(self,sid,semester):
 		classes = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
-								self.classes.department,self.classes.credits).select_from(self.classes).join(self.taking)
-								.filter(self.taking.sid==sid).filter(self.taking.semester==semester)
+								self.classes.department,self.classes.credits).select_from(self.classes).join(self.taking).filter(
+								self.taking.sid==sid).filter(self.taking.semester==semester)
 		return classes
 			
 
 	def get_class_info(self,cid):
 		cla = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
-								self.classes.department,self.classes.credits)
-								.filter(self.classes.cid==cid).one()
+								self.classes.department,self.classes.credits).filter(self.classes.cid==cid).one()
 		return cla
 
 
 	def get_grades(self,sid, semeter=None):
 		grades = []
 		if semester != None:
-			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking)
-					.join(self.classes).filter(self.taking.sid==sid)
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking).join(
+				self.classes).filter(self.taking.sid==sid)
 		else:
-			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking)
-					.join(self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester)
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking).join(
+				self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester)
 		return result
 
 
 	def get_prof_info(self,uid):
-		prof_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
-										self.professors.dept,self.professors.salary).select_from(self.users).join(self.professors)
-										.filter(self.users.uid==uid)
+		prof_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth,
+										self.professors.dept,self.professors.salary).select_from(self.users).join(self.professors).filter(
+										self.users.uid==uid)
 		return prof_info
 
 	def get_student_info(self,uid):
-		stud_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
-										self.students.major,self.students.graduation).select_from(self.users).join(self.students)
-										.filter(self.users.uid==uid)
+		stud_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth,
+										self.students.major,self.students.graduation).select_from(self.users).join(self.students).filter(
+										self.users.uid==uid)
 		return stud_info
 		
 
 	def get_admin_info(self,uid):
-		admin_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
-										).select_from(self.users).join(self.administrators)
-										.filter(self.users.uid==uid)
+		admin_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth
+										).select_from(self.users).join(self.administrators).filter(self.users.uid==uid)
 		return admin_info
 		
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
-	dbm.new_student(000000,"Gavin Lee","1 Gavin House Road",datetime.strptime('10-23-2018','%m-%d-%Y'), "BSE", 2019, uid=None)
-	dbm.new_class("Spring 2018","These are meeting times", "EE", 2, 25)
-	dbm.enrol(5,2232)
 	import pdb
 	pdb.set_trace()
 
