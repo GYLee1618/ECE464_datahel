@@ -29,37 +29,64 @@
 			raise NotImplementedError
 
 	def get_schedule(self,sid,semester):
-		classes = []
-		for c in self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.semester==semester):
-			classes+=[get_class_info(c.cid)]
+		classes = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
+								self.classes.department,self.classes.credits).select_from(self.classes).join(self.taking)
+								.filter(self.taking.sid==sid).filter(self.taking.semester==semester)
 		return classes
+			
 
 	def get_class_info(self,cid):
-		info = []
-		cla = self.session.query(self.classes).filter(self.classes.cid==cid).one()
+		cla = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
+								self.classes.department,self.classes.credits)
+								.filter(self.classes.cid==cid).one()
 		return cla
 
 
 	def get_grades(self,sid, semeter=None):
 		grades = []
 		if semester != None:
-			result = self.session.query(self.taking,self.classes).join(self.taking).join(self.classes)
-					.filter(self.taking.sid==sid)
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking)
+					.join(self.classes).filter(self.taking.sid==sid)
 		else:
-			result = self.session.query(self.taking,self.classes).join(self.taking).join(self.classes)
-					.filter(self.taking.sid==sid).filter(self.classes.semester==semester)
-		for cla in result:
-			grades += [[cla.cid,cla.name,cla.semester,cla.grade]]
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking)
+					.join(self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester)
+		return result
+
+
+	def get_prof_info(self,uid):
+		prof_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
+										self.professors.dept,self.professors.salary).select_from(self.users).join(self.professors)
+										.filter(self.users.uid==uid)
+		return prof_info
+
+	def get_student_info(self,uid):
+		stud_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
+										self.students.major,self.students.graduation).select_from(self.users).join(self.students)
+										.filter(self.users.uid==uid)
+		return stud_info
 		
-		raise NotImplementedError
-
-	
-
-	def get_prof_info(self,pid):
-		raise NotImplementedError
-
-	def get_student_info(self,sid):
-		raise NotImplementedError
 
 	def get_admin_info(self,uid):
-		raise NotImplementedError
+		admin_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.dob
+										).select_from(self.users).join(self.administrators)
+										.filter(self.users.uid==uid)
+		return admin_info
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
