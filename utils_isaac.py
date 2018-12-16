@@ -29,27 +29,27 @@
 			raise NotImplementedError
 
 	def get_schedule(self,sid,semester):
-		classes = []
-		for c in self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.semester==semester):
-			classes+=[get_class_info(c.cid)]
+		classes = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
+								self.classes.department,self.classes.credits).select_from(self.classes).join(self.taking)
+								.filter(self.taking.sid==sid).filter(self.taking.semester==semester)
 		return classes
+			
 
 	def get_class_info(self,cid):
-		info = []
-		cla = self.session.query(self.classes).filter(self.classes.cid==cid).one()
+		cla = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
+								self.classes.department,self.classes.credits)
+								.filter(self.classes.cid==cid).one()
 		return cla
 
 
 	def get_grades(self,sid, semeter=None):
 		grades = []
 		if semester != None:
-			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).selectfrom(self.taking)
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking)
 					.join(self.classes).filter(self.taking.sid==sid)
 		else:
-			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).selectfrom(self.taking)
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking)
 					.join(self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester)
-		# for cla in result:
-		# 	grades += [[cla.cid,cla.name,cla.semester,cla.grade]]
 		return result
 
 
