@@ -49,7 +49,7 @@
 			result = self.session.query(self.taking,self.classes).join(self.taking).join(self.classes)
 					.filter(self.taking.sid==sid).filter(self.classes.semester==semester)
 		for cla in result:
-			grades += [cla.cid,cla.name,cla.semester,cla.grade]
+			grades += [[cla.cid,cla.name,cla.semester,cla.grade]]
 		
 		raise NotImplementedError
 
