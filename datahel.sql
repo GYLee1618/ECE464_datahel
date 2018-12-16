@@ -47,7 +47,7 @@ CREATE TABLE teaching ( teid INT  NOT NULL AUTO_INCREMENT,
 	pid INT,
 	cid INT,
 	PRIMARY KEY (teid),
-	FOREIGN KEY (pid) REFERENCES professors(pid),
+	FOREIGN KEY (pid) REFERENCES professors(uid),
 	FOREIGN KEY (cid) REFERENCES classes(cid)
 );
 
@@ -57,7 +57,7 @@ CREATE TABLE taking ( taid INT NOT NULL AUTO_INCREMENT,
 	grade FLOAT,
 	PRIMARY KEY (taid),
 	FOREIGN KEY (cid) REFERENCES classes(cid),
-	FOREIGN KEY (sid) REFERENCES students(sid),
+	FOREIGN KEY (sid) REFERENCES students(uid),
 	CHECK (grade <= 4),
 	CHECK (grade >= 0)
 );
