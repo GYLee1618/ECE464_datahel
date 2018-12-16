@@ -13,15 +13,20 @@
 			raise ValueError("No more Seats Available: Not Enrolled")
 
 	def drop(self,sid,cid):
+		obj = self.session.query().filter(self.taking.sid==sid).filter(self.taking.cid==cid).one
+		self.session.delete(obj)
 		try:
-			obj = self.session.query().filter(self.taking.sid==sid).filter(self.taking.cid==cid).one
-			self.session.delete(obj)
 			self.session.commit()
 		except:
-		
+			raise NotImplementedError
 
-	def change_salary(self,uid, new_salary):
-		raise NotImplementedError
+	def change_salary(self,uid,new_salary):
+		professor = self.session.query().filter(self.professors.uid==uid)
+		professor.salary = new_salary
+		try:
+			self.session.commit()
+		except:
+			raise NotImplementedError
 
 	def get_schedule(self,sid,semester):
 		raise NotImplementedError
