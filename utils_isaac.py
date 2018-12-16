@@ -8,15 +8,17 @@
 				self.session.commit()
 				return
 			except MySQLdb.Error, e:
-				try:
-        			print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
-    			except IndexError:
-        			print "MySQL Error: %s" % str(e)
+        		return e.args
 		else:
 			raise ValueError("No more Seats Available: Not Enrolled")
 
 	def drop(self,sid,cid):
-		raise NotImplementedError
+		try:
+			obj = self.session.query().filter(self.taking.sid==sid).filter(self.taking.cid==cid).one
+			self.session.delete(obj)
+			self.session.commit()
+		except:
+		
 
 	def change_salary(self,uid, new_salary):
 		raise NotImplementedError
