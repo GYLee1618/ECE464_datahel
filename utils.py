@@ -169,7 +169,7 @@ class DBManager:
 	def get_schedule(self,sid,semester):
 		classes = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
 								self.classes.department,self.classes.credits).select_from(self.classes).join(self.taking).filter(
-								self.taking.sid==sid).filter(self.taking.semester==semester)
+								self.taking.sid==sid).filter(self.classes.semester==semester)
 		return classes
 			
 
