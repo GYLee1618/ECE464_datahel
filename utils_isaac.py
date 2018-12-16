@@ -1,11 +1,17 @@
 	def enrol(self,sid,cid):
-		seatstaken = self.session.query(func.count(self.taking.sid)).filter(cid=cid)
-		totalseats = self.session.query(self.classes.max_students).filter(cid=cid)
+		seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid)
+		totalseats = self.session.query(self.classes.max_students).filter(self.taking.cid==cid)
 		if totalseats - seatstaken > 0:
 			new_taking = self.taking(taid = None,sid=sid,cid=cid)
 			self.session.add(new_taking)
-			self.session.commit()
-			return
+			try:
+				self.session.commit()
+				return
+			except MySQLdb.Error, e:
+				try:
+        			print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+    			except IndexError:
+        			print "MySQL Error: %s" % str(e)
 		else:
 			raise ValueError("No more Seats Available: Not Enrolled")
 
