@@ -43,16 +43,18 @@
 	def get_grades(self,sid, semeter=None):
 		grades = []
 		if semester != None:
-			result = self.session.query(self.taking,self.classes).join(self.taking).join(self.classes)
-					.filter(self.taking.sid==sid)
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).selectfrom(self.taking)
+					.join(self.classes).filter(self.taking.sid==sid)
 		else:
-			result = self.session.query(self.taking,self.classes).join(self.taking).join(self.classes)
-					.filter(self.taking.sid==sid).filter(self.classes.semester==semester)
-		for cla in result:
-			grades += [[cla.cid,cla.name,cla.semester,cla.grade]]
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).selectfrom(self.taking)
+					.join(self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester)
+		# for cla in result:
+		# 	grades += [[cla.cid,cla.name,cla.semester,cla.grade]]
+		return result
 
 
 	def get_prof_info(self,pid):
+
 		raise NotImplementedError
 
 	def get_student_info(self,sid):
