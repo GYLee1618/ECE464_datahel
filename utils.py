@@ -134,22 +134,22 @@ class DBManager:
 
 		return self.session.query(self.users).select_from(self.users).join(utable).filter(self.users.uname==uname).filter(self.users.password==pwd).scalar() is not None 
 
-		def enrol(self,sid,cid):
-		seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid)
-		totalseats = self.session.query(self.classes.max_students).filter(self.taking.cid==cid)
-		if totalseats - seatstaken > 0:
-			new_taking = self.taking(taid = None,sid=sid,cid=cid)
-			self.session.add(new_taking)
-			try:
-				self.session.commit()
-				return
-			except MySQLdb.Error, e:
-        		return e.args
-		else:
-			raise ValueError("No more Seats Available: Not Enrolled")
+	def enrol(self,uid,cid):
+	seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid).one()
+	totalseats = self.session.query(self.classes.max_students).filter(self.taking.cid==cid).one()
+	if totalseats - seatstaken > 0:
+		new_taking = self.taking(taid = None,uid=uid,cid=cid)
+		self.session.add(new_taking)
+		try:
+			self.session.commit()
+			return
+		except MySQLdb.Error, e:
+    		return e.args
+	else:
+		raise ValueError("No more Seats Available: Not Enrolled")
 
-	def drop(self,sid,cid):
-		obj = self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.cid==cid).one()
+	def drop(self,uid,cid):
+		obj = self.session.query(self.taking).filter(self.taking.sid==uid).filter(self.taking.cid==cid).one()
 		self.session.delete(obj)
 		try:
 			self.session.commit()
@@ -211,7 +211,9 @@ class DBManager:
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
-	print(dbm.authenticate('mhes', 'QI9d0qIceG','professors'))
+	dbm.new_student(000000,"Gavin Lee","1 Gavin House Road",datetime.strptime('10-23-2018','%m-%d-%Y'), "BSE", 2019, uid=None)
+	dbm.new_class("Spring 2018","These are meeting times", "EE", 2, 25)
+	dbm.enrol(5,2232)
 	import pdb
 	pdb.set_trace()
 
