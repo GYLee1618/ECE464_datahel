@@ -114,16 +114,30 @@ class DBManager:
 		# gpa_query = "SELECT SUM(t.grade*c.credits)/SUM(c.credits) FROM (taking t JOIN students s ON t.sid=s.uid AND t.grade IS NOT NULL AND s.uid=\"{}\") \
 		# 			JOIN classes c ON t.cid=c.cid;".format(sid)
 		gpa = self.session.query(func.sum(self.taking.grade*self.classes.credits)/func.sum(self.classes.credits)).select_from(self.taking).filter(self.taking.sid==uid,self.taking.grade.isnot(None)).join(self.classes).one()[0]
-		import pdb
-		pdb.set_trace()
+		return gpa
 
 	def get_roster(self,cid):
-		roster_query = "SELECT s.name,s.email,s.major FROM taking t JOIN students s on t.sid=s.uid and t.cid=\"{}\";".format(cid)
+		# roster_query = "SELECT s.name,s.email,s.major FROM taking t JOIN students s on t.sid=s.uid and t.cid=\"{}\";".format(cid)
+		roster = self.session.query(self.users.name,self.users.email,self.students.major).select_from(self.users).join(self.students).join(self.taking,self.taking.cid==cid).all()
 
+		return roster
+
+	def authenticate(self,uname,pwd,utype):
+		if utype == 'students':
+			utable = self.students
+		elif utype == 'professors':
+			utable = self.professors
+		elif utype == 'administrators':
+			utable = self.administrators
+		else:
+			raise ValueError('Invalid user type!')
+
+		return self.session.query(self.users).select_from(self.users).join(utable,self.users.uname==uname,self.users.pwd==pwd) is not None 
+		
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
-	dbm.get_gpa(2)
+	print(dbm.authenticate('ialbouca','brup'))
 	import pdb
 	pdb.set_trace()
 
