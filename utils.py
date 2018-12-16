@@ -179,7 +179,7 @@ class DBManager:
 		return cla
 
 
-	def get_grades(self,sid, semeter=None):
+	def get_grades(self,sid, semester=None):
 		grades = []
 		if semester != None:
 			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking).join(
