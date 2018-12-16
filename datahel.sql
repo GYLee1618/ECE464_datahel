@@ -69,7 +69,7 @@ insert into students values (1, 1, 'Architecture', 2018);
 insert into users values(2, '139840649', 'eangerho', '57NIoGgRXp', 'Elizabeth Angerhofer', 'eangerho@cooper.edu', '240 Vantuyle St, Pittsfield, MA 01201', '19990112');
 insert into students values (2, 2, 'Electrical Engineering', 2019);
 
-insert into users values (3, '704452583', 'jlyrek', '4qIvktm7mV', 'Eugene Sokolov', 'esokolov@cooper.edu', '7543 Koomen St, Augusta, GA 30906', '19990327');
+insert into users values (3, '704452583', 'esokolov', '4qIvktm7mV', 'Eugene Sokolov', 'esokolov@cooper.edu', '7543 Koomen St, Augusta, GA 30906', '19990327');
 insert into professors values (1, 3, 'Electrical Engineering', 132450.8);
 
 insert into users values (4, '916460110', 'kfoxhall', 'tTprsmnXhf', 'Kyle Foxhall', 'kfoxhall@cooper.edu', '5034 Wiitanen St, Fullerton, CA 92833', '20000121');
