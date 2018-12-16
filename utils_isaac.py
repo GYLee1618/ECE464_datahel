@@ -13,8 +13,8 @@ def get_schedule(sid,semester):
 def get_grades(sid, semeter=None):
 	raise NotImplementedError
 
-def get_class_info(cid)
-:	raise NotImplementedError
+def get_class_info(cid):	
+	raise NotImplementedError
 
 def get_prof_info(pid):
 	raise NotImplementedError
