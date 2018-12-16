@@ -211,6 +211,7 @@ class DBManager:
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
+	dbm.drop(5,2232)
 	import pdb
 	pdb.set_trace()
 
