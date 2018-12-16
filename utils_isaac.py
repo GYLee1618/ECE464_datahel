@@ -44,13 +44,9 @@
 		if semester != None:
 			result = self.session.query(self.taking).filter(self.taking.sid==sid)
 		else:
-			result = self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.semester==semester)
-		query = self.taking.select()
-		query = query.where(self.taking.sid==sid)
-		if semester != None:
-			query = query.where(self.taking.semester==semester)
-		result = self.conn(query)
-
+			result = self.session.query(self.taking,self.classes).join(self.taking).join(self.classes)
+					.filter(self.taking.sid==sid).filter(self.classes.semester==semester)
+		
 		raise NotImplementedError
 
 	
