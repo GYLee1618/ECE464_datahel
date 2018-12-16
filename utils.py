@@ -211,7 +211,21 @@ class DBManager:
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
-	dbm.drop(5,2232)
+	sok = dbm.get_prof_info(3)
+	print sok
+	dbm.change_salary(3,250000.2)
+	sok = dbm.get_prof_info(3)
+	print sok 
+	classes = dbm.get_schedule(1,"Fall 2018")
+	print classes
+	c1 = dbm.get_class_info(464)
+	print c1
+	grades = dbm.get_grades(1,"Fall 2018")
+	print grades
+
+	stud = dbm.get_student_info(1)
+	print stud
+
 	import pdb
 	pdb.set_trace()
 
