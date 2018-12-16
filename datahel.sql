@@ -40,7 +40,8 @@ CREATE TABLE administrators ( uid INT,
 	PRIMARY KEY (uid)
 );
 
-CREATE TABLE classes(cid INT,	
+CREATE TABLE classes(cid INT,
+	name CHAR(16),	
 	semester CHAR(16),
 	meeting_times CHAR(32),
 	department CHAR(32),
@@ -95,19 +96,19 @@ insert into professors values (2460, '916460110', 'kfoxhall', 'tTprsmnXhf', 'Kyl
 insert into professors values (199, '515943776', 'jcicio', 'hT0PxXaYpH', 'Jose Cicio', 'jcicio@cooper.edu', '4934 Mikota St, Ashburn, VA 20147', '19981112', 'General Engineering', 93610.61);
 insert into professors values (1526, '683576277', 'lhaythor', '0sprf84gkS', 'Linda Haythorn', 'lhaythor@cooper.edu', '8795 Iannetta St, Elizabethtown, KY 42701', '19980917', 'Civil Engineering', 156244.22);
 insert into professors values (1351, '764586958', 'jyelen', 'gKK1Qe64r4', 'Jonathan Yelen', 'jyelen@cooper.edu', '2113 Bougher St, Hialeah, FL 33010', '19981001', 'Electrical Engineering', 191962.41);
-insert into professors values (3354, '354349888', 'jenswort', 'CkKdAT0WeJ', 'Jordan Ensworth', 'jenswort@cooper.edu', '2259 Schmoekel St, Winston Salem, NC 27107', '19980204', 'Electrical Engineering', 141718.01);
+insert into professors values (3354, '354349888', 'jenswort', 'CkKdAT0WeJ', 'Eugene Sokolov', 'jenswort@cooper.edu', '2259 Schmoekel St, Winston Salem, NC 27107', '19980204', 'Electrical Engineering', 141718.01);
 insert into professors values (1225, '977071612', 'gguder', '8FjSTiwJ1i', 'Gary Guder', 'gguder@cooper.edu', '7307 Lamper St, Gardena, CA 90247', '20000507', 'Mechanical Engineering', 97038.07);
 insert into professors values (2386, '622405950', 'skoceja', 'FcKoZWxEHn', 'Samuel Koceja', 'skoceja@cooper.edu', '5992 Vasek St, Monroe Township, NJ 08831', '19991224', 'General Engineering', 32200.67);
 insert into professors values (2304, '379004848', 'jbaesman', 'SMsbuAco6w', 'Jacob Baesman', 'jbaesman@cooper.edu', '5143 Teta St, Desoto, TX 75115', '19990812', 'Art', 107848.68);
 insert into professors values (322, '863250326', 'jmerline', 'wQxxp9SacN', 'Julie Merline', 'jmerline@cooper.edu', '4577 Hoepf St, New York, NY 10023', '19971112', 'Hummanities', 144626.83);
 
-insert into classes values (540, 'ECE464', 'Fall 2018', 'Tue 1800-2050', 3.0, 30);
-insert into classes values (2231, 'SS351', 'Fall 2018', 'Tue 0900-1150', 3.0, 20);
-insert into classes values (227, 'ECE464', 'Fall 2016', 'Wed 1600-1750, Thu 1200-1250', 3.0, 30);
-insert into classes values (1423, 'PH112', 'Spring 2019', 'Wed 0900-1050, Fri 1200-1350', 4.0, 20);
-insert into classes values (2001, 'EID103', 'Spring 2019', 'Wed 1600-1750, Fri 1000-1150', 3.0, 20);
-insert into classes values (1111, 'ARCH011', 'Spring 2019', 'Wed 1600-1750, Fri 1000-1150', 4.0, 30);
-insert into classes values (1231, 'ECE471', 'Fall 2018', 'Thu 1800-2050', 3.0, 30);
+insert into classes values (540, 'ECE464', 'Fall 2018', 'Tue 1800-2050','Electrical Engineering' , 3.0, 30);
+insert into classes values (2231, 'SS351', 'Fall 2018', 'Tue 0900-1150','Hummanities', 3.0, 20);
+insert into classes values (227, 'ECE464', 'Fall 2016', 'Wed 1600-1750, Thu 1200-1250','Electrical Engineering', 3.0, 30);
+insert into classes values (1423, 'PH112', 'Spring 2019', 'Wed 0900-1050, Fri 1200-1350','Physics', 4.0, 20);
+insert into classes values (2001, 'EID103', 'Spring 2019', 'Wed 1600-1750, Fri 1000-1150','General Engineering', 3.0, 20);
+insert into classes values (1111, 'ARCH011', 'Spring 2019', 'Wed 1600-1750, Fri 1000-1150','Architecture', 4.0, 30);
+insert into classes values (1231, 'ECE471', 'Fall 2018', 'Thu 1800-2050','Electrical Engineering', 3.0, 30);
 
 insert into teaching values (201, 3354, 540);
 insert into teaching values (3214, 322, 2231);
