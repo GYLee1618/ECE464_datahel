@@ -13,7 +13,7 @@
 			raise ValueError("No more Seats Available: Not Enrolled")
 
 	def drop(self,sid,cid):
-		obj = self.session.query().filter(self.taking.sid==sid).filter(self.taking.cid==cid).one
+		obj = self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.cid==cid).one()
 		self.session.delete(obj)
 		try:
 			self.session.commit()
@@ -21,7 +21,7 @@
 			raise NotImplementedError
 
 	def change_salary(self,uid,new_salary):
-		professor = self.session.query().filter(self.professors.uid==uid)
+		professor = self.session.query(self.professors).filter(self.professors.uid==uid)
 		professor.salary = new_salary
 		try:
 			self.session.commit()
@@ -29,13 +29,27 @@
 			raise NotImplementedError
 
 	def get_schedule(self,sid,semester):
-		raise NotImplementedError
+		classes = []
+		for c in self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.semester==semester):
+			classes+=[get_class_info(c.cid)]
+		return classes
+
+	def get_class_info(self,cid):
+		info = []
+		cla = self.session.query(self.classes).filter(self.classes.cid==cid).one()
+		return cla
+
 
 	def get_grades(self,sid, semeter=None):
+		if semester != None:
+			result = self.session.query(self.taking).filter(self.taking.sid==sid)
+		else:
+			result = self.session.query(self.taking,self.classes).join(self.taking).join(self.classes)
+					.filter(self.taking.sid==sid).filter(self.classes.semester==semester)
+		
 		raise NotImplementedError
 
-	def get_class_info(self,cid):	
-		raise NotImplementedError
+	
 
 	def get_prof_info(self,pid):
 		raise NotImplementedError
