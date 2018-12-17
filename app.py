@@ -1,15 +1,25 @@
 from flask import Flask, request, render_template, session, redirect
 from utils import DBManager
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "rexrexrex"
 dbm = DBManager('root','')
 
+def get_current_sem():
+	now = datetime.now()
+	if now.month >= 6:
+		semester = 'Fall {}'.format(now.year)
+	else:
+		semester = 'Spring {}'.format(now.year)
+	return semester
+
+
 @app.route("/")
 def home():
 	if 'access' in session:
 		if session['access'] == "student":
-			return render_template('student_home.html')
+			return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],session['semester']))
 		elif session['access'] == "professor":
 			return render_template('faculty_home.html')
 		elif session['access'] == "admin":
@@ -23,7 +33,7 @@ def home():
 def students():
 	if 'uname' in session:
 		if session['access'] == "student":
-			return render_template('student_home.html')	
+			return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],session['semester']))	
 		else:
 			return redirect("/")
 	return render_template('index.html')
@@ -55,6 +65,7 @@ def student_login():
 		session['uname'] = uname
 		session['uid'] = uid 
 		session['access'] = "student" 
+		session['semester'] = get_current_sem()
 		return redirect("student")
 	else:
 		return redirect("logout")
