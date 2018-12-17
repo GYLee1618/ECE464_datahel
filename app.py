@@ -9,13 +9,15 @@ dbm = DBManager('root','')
 @app.route("/student")
 def students():
 	if 'uname' in session:
-		return render_template('student_home.html')
+		if session['access'] == "student":
+			return render_template('student_home.html')
 	return render_template('index.html')
 
 @app.route("/faculty")
 def faculty():
-	if session['uname'] != None:
-		return render_template('faculty_home.html')
+	if 'uname' in session:
+		if session['access'] == "professor":
+			return render_template('faculty_home.html')
 	return render_template('professor_login.html')
 
 @app.route("/home")
