@@ -1,16 +1,20 @@
 from flask import Flask, request, render_template, session
 from utils import DBManager
 
+<<<<<<< HEAD
 app = Flask(__name__,template_folder='')
 app.secret_key = "rexrexrex"
+=======
+app = Flask(__name__)
+>>>>>>> origin/master
 dbm = DBManager('root','')
 
 @app.route("/")
-def hello():
+def students():
 	return render_template('index.html')
-@app.route("/path")
-def function_to_run():
-	return 
+@app.route("/faculty")
+def faculty():
+	return render_template('professor_login.html')
 
 @app.route("/student_login", methods=['POST'])
 def student_login():
@@ -46,6 +50,11 @@ def admin_login(uname,pwd):
 		return "You In admin"
 	else:
 		return "You done fucked up"
+@app.route("/logout")
+def logout():
+	session.pop('uname',None)
+	session.pop('uid',None)
+	session.pop('access',None)
 
 if __name__ == '__main__':
 	app.run('localhost',port=9001)
