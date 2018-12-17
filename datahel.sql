@@ -74,8 +74,8 @@ CREATE TABLE planned ( plid INT NOT NULL AUTO_INCREMENT,
 );
 
 
--- insert into users values (1, '605349104', 'mhes', 'QI9d0qIceG', 'Margaret Hes', 'mhes@cooper.edu', '5402 Pankowski St, Houston, TX 77036', '19980829');
--- insert into students values (1, 1, 'Architecture', 2018);
+insert into users values (1, NULL, 'TBD', 'garbage', 'TBD', NULL, NULL, NULL);
+insert into professors values (1, 1, NULL, NULL);
 
 -- insert into users values(2, '139840649', 'eangerho', '57NIoGgRXp', 'Elizabeth Angerhofer', 'eangerho@cooper.edu', '240 Vantuyle St, Pittsfield, MA 01201', '19990112');
 -- insert into students values (2, 2, 'Electrical Engineering', 2019);

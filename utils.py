@@ -103,10 +103,20 @@ class DBManager:
 		return uid, uname, email, password			
 
 	def new_class(self,course_code, name, description, semester, meeting_times, department, credits, max_students):
-		new_class = self.classes(name=name,semester=semester,meeting_times=meeting_times,department=department,credits=credits,max_students=max_students)
+		new_class = self.classes(course_code=course_code, name=name, description=description, semester=semester,meeting_times=meeting_times,department=department,credits=credits,max_students=max_students)
 		self.session.add(new_class)
 		self.session.commit()
+
+		new_teaching = self.teaching(cid=new_class.cid,pid=1)
+		self.session.add(new_teaching)
+		self.session.commit()
+
 		return new_class.cid
+
+	def change_teaching(self,cid,pid):
+		teaching = self.session.query(self.teaching).join(self.classes).filter(self.teaching.cid==cid).one()
+		teaching.pid = pid
+		self.session.commit()
 
 	def change_password(self, uid, old_pwd, new_pwd):
 		user = self.session.query(self.users).filter(self.users.uid==uid).one()
@@ -235,11 +245,12 @@ class DBManager:
 		classes = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.description,self.classes.semester,self.classes.meeting_times,
 								self.classes.department,self.classes.credits).select_from(self.classes).filter(
 								self.classes.semester==semester).all()
+
 		cids = [cl[0] for cl in classes]
 		profs = self.session.query(self.teaching.cid,self.teaching.pid,self.users.name).select_from(self.teaching).join(self.professors).join(
 									self.users).filter(self.teaching.cid.in_(cids)).all()
 		output = [list(cl)+[prof[2]] for prof in profs for cl in classes if cl[0] == prof[0]]
-			
+		
 		return output		
 
 	
@@ -252,6 +263,15 @@ class DBManager:
 				self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester).order_by(self.classes.semester,self.classes.cid).all()	
 		return result
 
+	def get_plan(self,sid,semester):
+		classes = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.description,self.classes.semester,self.classes.meeting_times,
+								self.classes.department,self.classes.credits).select_from(self.planned).join(self.students).filter(self.students.sid==sid).join(self.classes).all()
+		cids = [cl[0] for cl in classes]
+		profs = self.session.query(self.teaching.cid,self.teaching.pid,self.users.name).select_from(self.teaching).join(self.professors).join(
+									self.users).filter(self.teaching.cid.in_(cids)).all()
+		output = [list(cl)+[prof[2]] for prof in profs for cl in classes if cl[0] == prof[0]]
+			
+		return output
 
 	def get_prof_info(self,uid):
 		prof_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth,
@@ -270,12 +290,18 @@ class DBManager:
 		admin_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth
 										).select_from(self.users).join(self.administrators).filter(self.users.uid==uid).all()
 		return admin_info
-		
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
 	schedule = dbm.get_schedule(1,"Fall 2018")
+	print(dbm.new_student('605349104', 'Margaret Hes', '5402 Pankowski St, Houston, TX 77036', '19980829', 'Architecture', 2018))
+	print(dbm.new_student('139840649', 'Elizabeth Angerhofer', '240 Vantuyle St, Pittsfield, MA 01201', '19990112', 'Electrical Engineering', 2019))
+	print(dbm.new_professor('704452583', 'Eugene Sokolov', '7543 Koomen St, Augusta, GA 30906', '19990327','Electrical Engineering', 132450.8))
+	print(dbm.new_professor('916460110', 'Kyle Foxhall', '5034 Wiitanen St, Fullerton, CA 92833', '20000121', 'Physics', 52543.89))
 	#def new_class(self,course_code, name, description, semester, meeting_times, department, credits, max_students):
+	dbm.new_class('ECE464', 'Databases', 'Learn about SQL and NoSQL Databases', 'Fall 2018', 'Tue 1800-2050','Electrical Engineering' , 3.0, 30)
+	dbm.new_class( 'PH351', 'Fluids', 'Learn about liquids and gasses', 'Fall 2018', 'Tue 0900-1150','Physics', 3.0, 20)
+	dbm.new_class('ECE464', 'Databases', 'Learn about SQL and NoSQL Databases', 'Fall 2016', 'Wed 1600-1750, Thu 1200-1250','Electrical Engineering', 3.0, 30)
 	dbm.new_class("ME395","Thermodynamics","Another Thermo Course","Spring 2019","Wed 2-5", "Mechanical Engineering",3.0,25)
 	dbm.new_class("ME412","Autonomous Mobile Robots","ROBOTS!!!","Spring 2019","Thurs 6-9", "Mechanical Engineering",3.0,25)
 	dbm.new_class("ECE161","Programming Languages","POINTERS!!","Spring 2019","Mon 2-5", "Electrical Engineering",3.0,25)
@@ -286,6 +312,12 @@ if __name__ == '__main__':
 	dbm.new_class("ECE161","Programming Languages","POINTERS!!","Spring 2017","Mon 2-5", "Electrical Engineering",3.0,25)
 	dbm.new_class("ECE150","Digital Logic Design","NO SLEEP FOR YOU!!","Spring 2017","Tues 2-5", "Electrical Engineering",3.0,30)
 	dbm.new_class("ECE335","Engineering Electromagnetics","Some Gabario!","Spring 2017","Thurs 8-11", "Electrical Engineering",3.0,25)
+
+	dbm.change_teaching(1,4)
+	dbm.change_teaching(2,5)
+	dbm.change_teaching(3,4)
+	dbm.change_teaching(6,4)
+
 
 	import pdb
 	pdb.set_trace()

@@ -6,14 +6,6 @@ app = Flask(__name__)
 app.secret_key = "rexrexrex"
 dbm = DBManager('root','')
 
-try:
-	print(dbm.new_student('605349104', 'Margaret Hes', '5402 Pankowski St, Houston, TX 77036', '19980829', 'Architecture', 2018))
-	print(dbm.new_student('139840649', 'Elizabeth Angerhofer', '240 Vantuyle St, Pittsfield, MA 01201', '19990112', 'Electrical Engineering', 2019))
-	print(dbm.new_professor('704452583', 'Eugene Sokolov', '7543 Koomen St, Augusta, GA 30906', '19990327','Electrical Engineering', 132450.8))
-	print(dbm.new_professor('916460110', 'Kyle Foxhall', '5034 Wiitanen St, Fullerton, CA 92833', '20000121', 'Physics', 52543.89))
-except:
-	pass
-
 
 def get_current_sem():
 	now = datetime.now()
@@ -65,11 +57,11 @@ def studentGrades():
 			return redirect("/")
 	return render_template('index.html')
 
-@app.route("/student_scheduling")
+@app.route("/scheduling")
 def studentSchedule():
 	if 'uname' in session:
 		if session['access'] == "student":
-			return render_template('student_schedule.html',classes=get_classes(get_next_sem()))
+			return render_template('student_scheduling.html',schedule=dbm.get_classes(get_next_sem()))
 		else:
 			return redirect("/")
 	return render_template('index.html')
