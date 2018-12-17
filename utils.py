@@ -6,6 +6,7 @@ from sqlalchemy.sql import text
 from sqlalchemy import exc
 from datetime import datetime
 from passlib.hash import sha256_crypt
+import string
 
 class DBManager:
 	def __init__(self,uname,pwd):
@@ -79,15 +80,15 @@ class DBManager:
 
 	def new_professor(self,ssn, name, address, DOB, department, salary, uid=None):
 		if uid:
-			new_professor = self.professors(sid=None, uid=uid, department=department, salary=salary)
+			new_professor = self.professors(pid=None, uid=uid, department=department, salary=salary)
 			self.session.add(new_professor)
 			self.session.commit()
 			return
 		uid, uname, email, password = self.new_user(ssn, name, address, DOB)
-		new_professor = self.professors(sid=None, uid=uid, department=department, salary=salary)
+		new_professor = self.professors(pid=None, uid=uid, department=department, salary=salary)
 		self.session.add(new_professor)
 		self.session.commit()
-		return uname, email, password		
+		return uid, uname, email, password		
 
 	def new_administrator(self,ssn, name, address, DOB, uid=None):
 		if uid:
@@ -99,7 +100,7 @@ class DBManager:
 		new_administrator = self.administrators(sid=None, uid=uid, department=department)
 		self.session.add(new_administrator)
 		self.session.commit()
-		return uname, email, password			
+		return uid, uname, email, password			
 
 	def new_class(self, semester, meeting_times, department, credits, max_students):
 		new_class = self.classes(semester=semester,meeting_times=meeting_times,department=department,credits=credits,max_students=max_students)

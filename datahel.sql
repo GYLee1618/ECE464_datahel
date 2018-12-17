@@ -1,7 +1,7 @@
 CREATE TABLE users(uid int NOT NULL AUTO_INCREMENT,
 	ssn INT, 
 	uname CHAR(30) NOT NULL,
-	password CHAR(32) NOT NULL,
+	password CHAR(128) NOT NULL,
 	name CHAR(30) NOT NULL,
 	email CHAR(30),
 	address CHAR(64),
@@ -72,28 +72,16 @@ CREATE TABLE planned ( plid INT NOT NULL AUTO_INCREMENT,
 );
 
 
-insert into users values (1, '605349104', 'mhes', 'QI9d0qIceG', 'Margaret Hes', 'mhes@cooper.edu', '5402 Pankowski St, Houston, TX 77036', '19980829');
-insert into students values (1, 1, 'Architecture', 2018);
+-- insert into users values (1, '605349104', 'mhes', 'QI9d0qIceG', 'Margaret Hes', 'mhes@cooper.edu', '5402 Pankowski St, Houston, TX 77036', '19980829');
+-- insert into students values (1, 1, 'Architecture', 2018);
 
-insert into users values(2, '139840649', 'eangerho', '57NIoGgRXp', 'Elizabeth Angerhofer', 'eangerho@cooper.edu', '240 Vantuyle St, Pittsfield, MA 01201', '19990112');
-insert into students values (2, 2, 'Electrical Engineering', 2019);
+-- insert into users values(2, '139840649', 'eangerho', '57NIoGgRXp', 'Elizabeth Angerhofer', 'eangerho@cooper.edu', '240 Vantuyle St, Pittsfield, MA 01201', '19990112');
+-- insert into students values (2, 2, 'Electrical Engineering', 2019);
 
-insert into users values (3, '704452583', 'esokolov', '4qIvktm7mV', 'Eugene Sokolov', 'esokolov@cooper.edu', '7543 Koomen St, Augusta, GA 30906', '19990327');
-insert into professors values (1, 3, 'Electrical Engineering', 132450.8);
+-- insert into users values (3, '704452583', 'esokolov', '4qIvktm7mV', 'Eugene Sokolov', 'esokolov@cooper.edu', '7543 Koomen St, Augusta, GA 30906', '19990327');
+-- insert into professors values (1, 3, 'Electrical Engineering', 132450.8);
 
-insert into users values (4, '916460110', 'kfoxhall', 'tTprsmnXhf', 'Kyle Foxhall', 'kfoxhall@cooper.edu', '5034 Wiitanen St, Fullerton, CA 92833', '20000121');
-insert into professors values (2, 4, 'Physics', 52543.89);
+-- insert into users values (4, '916460110', 'kfoxhall', 'tTprsmnXhf', 'Kyle Foxhall', 'kfoxhall@cooper.edu', '5034 Wiitanen St, Fullerton, CA 92833', '20000121');
+-- insert into professors values (2, 4, 'Physics', 52543.89);
 
-insert into classes values (464, 'ECE464', 'Fall 2018', 'Tue 1800-2050','Electrical Engineering' , 3.0, 30);
-insert into classes values (2231, 'PH351', 'Fall 2018', 'Tue 0900-1150','Physics', 3.0, 20);
-insert into classes values (227, 'ECE464', 'Fall 2016', 'Wed 1600-1750, Thu 1200-1250','Electrical Engineering', 3.0, 30);
-
-insert into teaching values (1, 3, 464);
-insert into teaching values (2, 4, 2231);
-insert into teaching values (3, 3, 227);
-
-insert into taking values (1, 2, 464, 3);
-insert into taking values (4, 1, 227, 2);
-insert into taking values (2, 2, 2231, NULL);
-insert into taking values (3, 1, 2231, NULL);
 
