@@ -21,6 +21,7 @@ class DBManager:
 		self.administrators = Base.classes.administrators
 		self.teaching = Base.classes.teaching
 		self.taking = Base.classes.taking
+		self.planned = Base.classes.planned
 
 		self.session = Session(engine)
 		self.conn = engine.connect()
@@ -135,8 +136,6 @@ class DBManager:
 		return self.session.query(self.users).select_from(self.users).join(utable).filter(self.users.uname==uname).filter(self.users.password==pwd).scalar() is not None 
 
 	def enrol(self,uid,cid):
-		import pdb
-		pdb.set_trace()
 		seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid).scalar()
 		totalseats = self.session.query(self.classes.max_students).filter(self.classes.cid==cid).scalar()
 		if totalseats - seatstaken > 0:
@@ -151,15 +150,30 @@ class DBManager:
 			raise ValueError("No more Seats Available: Not Enrolled")
 
 	def drop(self,uid,cid):
-		obj = self.session.query(self.taking).filter(self.taking.sid==uid).filter(self.taking.cid==cid).one()
-		self.session.delete(obj)
+		obj = self.session.query(self.taking).filter(self.taking.sid==uid).filter(self.taking.cid==cid).all();
+		if len(obj) != 0:
+			self.session.delete(obj[0])
+			try:
+				self.session.commit()
+			except:
+				raise ValueError("something went wrong: contact Isaac Alboucai at (555)-555-5555 to get it fixed")
+		else:
+			raise KeyError("The user/class pair does not exist")
+
+	def plan(self,uid,cid):
+		new_plan = self.planned(taid = None,sid=uid,cid=cid)
+		self.session.add(new_plan)
 		try:
 			self.session.commit()
 		except:
-			raise NotImplementedError
+			raise ValueError("something went wrong: contact Isaac Alboucai at (555)-555-5555 to get it fixed")
+
+	def unplan(self,uid,cid):
+		obj = self.session.query(self.taking).filter(self.taking.sid==uid).filter(self.taking.cid==cid).one()
+
 
 	def change_salary(self,uid,new_salary):
-		professor = self.session.query(self.professors).filter(self.professors.uid==uid)
+		professor = self.session.query(self.professors).filter(self.professors.uid==uid).one()
 		professor.salary = new_salary
 		try:
 			self.session.commit()
@@ -169,7 +183,7 @@ class DBManager:
 	def get_schedule(self,sid,semester):
 		classes = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
 								self.classes.department,self.classes.credits).select_from(self.classes).join(self.taking).filter(
-								self.taking.sid==sid).filter(self.classes.semester==semester)
+								self.taking.sid==sid).filter(self.classes.semester==semester).all()
 		return classes
 			
 
@@ -180,37 +194,37 @@ class DBManager:
 
 
 	def get_grades(self,sid, semester=None):
-		grades = []
 		if semester != None:
 			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking).join(
-				self.classes).filter(self.taking.sid==sid)
+				self.classes).filter(self.taking.sid==sid).all()
 		else:
 			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking).join(
-				self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester)
+				self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester).all()
 		return result
 
 
 	def get_prof_info(self,uid):
 		prof_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth,
 										self.professors.department,self.professors.salary).select_from(self.users).join(self.professors).filter(
-										self.users.uid==uid)
+										self.users.uid==uid).all()
 		return prof_info
 
 	def get_student_info(self,uid):
 		stud_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth,
 										self.students.major,self.students.graduation).select_from(self.users).join(self.students).filter(
-										self.users.uid==uid)
+										self.users.uid==uid).all()
 		return stud_info
 		
 
 	def get_admin_info(self,uid):
 		admin_info = self.session.query(self.users.name,self.users.ssn,self.users.email,self.users.address,self.users.date_of_birth
-										).select_from(self.users).join(self.administrators).filter(self.users.uid==uid)
+										).select_from(self.users).join(self.administrators).filter(self.users.uid==uid).all()
 		return admin_info
 		
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
+	test = dbm.drop(0,0)
 	sok = dbm.get_prof_info(3)
 	print sok
 	dbm.change_salary(3,250000.2)
