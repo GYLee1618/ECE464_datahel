@@ -1,5 +1,6 @@
 from flask import Flask
 from utils import DBManager
+from flask import request
 
 app = Flask(__name__)
 dbm = DBManager('root','')
@@ -10,15 +11,17 @@ def hello():
 @app.route("/path")
 def function_to_run():
 	return "gavin is a butt"
-@app.route("/student_login")
-def login_student(uname,pwd):
+@app.route("/student_login") methods=['POST']
+def login_student():
+	uname = request.form['username']
+	pwd = request.form['pass']
 	success = dbm.authenticate(uname,pwd,'students')
 	if success:
 		return "You In student"
 	else:
 		return "You done fucked up"
 
-@app.route("/professor_login")
+@app.route("/professor_login") methods=['POST']
 def login_student(uname,pwd):
 	success = dbm.authenticate(uname,pwd,'professors')
 	if success:
@@ -26,7 +29,7 @@ def login_student(uname,pwd):
 	else:
 		return "You done fucked up"
 
-@app.route("/admin_login")
+@app.route("/admin_login") methods=['POST']
 def login_student(uname,pwd):
 	success = dbm.authenticate(uname,pwd,'adminstrators')
 	if success:
