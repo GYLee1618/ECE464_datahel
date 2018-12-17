@@ -22,7 +22,9 @@ def student_login():
 		return "You done fucked up"
 
 @app.route("/professor_login", methods=['POST'])
-def professor_login(uname,pwd):
+def professor_login():
+	uname = request.form['username']
+	pwd = request.form['pass']
 	success = dbm.authenticate(uname,pwd,'professors')
 	if success:
 		return "You In professor"
