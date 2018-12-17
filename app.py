@@ -6,6 +6,15 @@ app = Flask(__name__)
 app.secret_key = "rexrexrex"
 dbm = DBManager('root','')
 
+try:
+	print(dbm.new_student('605349104', 'Margaret Hes', '5402 Pankowski St, Houston, TX 77036', '19980829', 'Architecture', 2018))
+	print(dbm.new_student('139840649', 'Elizabeth Angerhofer', '240 Vantuyle St, Pittsfield, MA 01201', '19990112', 'Electrical Engineering', 2019))
+	print(dbm.new_professor('704452583', 'Eugene Sokolov', '7543 Koomen St, Augusta, GA 30906', '19990327','Electrical Engineering', 132450.8))
+	print(dbm.new_professor('916460110', 'Kyle Foxhall', '5034 Wiitanen St, Fullerton, CA 92833', '20000121', 'Physics', 52543.89))
+except:
+	pass
+
+
 def get_current_sem():
 	now = datetime.now()
 	if now.month >= 6:
@@ -127,7 +136,18 @@ def drop_class():
 			return redirect("401")
 	else:
 		return redirect("/")
-	
+
+@app.route("/account")	
+def account():
+	if 'uid' in session:
+		try:
+			dbm.change_password(session['uid']request['oldpass'],request['newpass'])
+			return render_template("account.html",error="")
+		except ValueError:
+			return render_template("account.html",error="Wrong Password")				
+	else:
+		return redirect("401")
+
 
 @app.route("/logout")
 def logout():
