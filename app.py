@@ -41,7 +41,7 @@ def faculty():
 def admin():
 	if 'uname' in session:
 		if session['access'] == "admin":
-			return render_template('faculty_home.html')
+			return render_template('admin_home.html')
 		else:
 			return redirect("/")
 	return render_template('admin_login.html')
