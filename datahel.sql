@@ -34,8 +34,8 @@ CREATE TABLE administrators ( aid INT NOT NULL AUTO_INCREMENT,
 );
 
 CREATE TABLE classes(cid INT NOT NULL AUTO_INCREMENT,
-	course_code CHAR(16)
-	name CHAR(16),	
+	course_code CHAR(16),
+	name CHAR(32),	
 	description TEXT,
 	semester CHAR(16),
 	meeting_times CHAR(32),

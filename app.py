@@ -25,6 +25,7 @@ def get_current_sem():
 
 
 @app.route("/")
+@app.route("/home")
 def home():
 	if 'access' in session:
 		if session['access'] == "student":
@@ -51,7 +52,7 @@ def students():
 def studentGrades():
 	if 'uname' in session:
 		if session['access'] == "student":
-			return render_template('student_grades.html',grades=dbm.get_grades(session['uid']))
+			return render_template('student_grades.html',grades=dbm.get_grades(session['uid']),gpa=dbm.get_gpa(session['uid']))
 		else:
 			return redirect("/")
 	return render_template('index.html')

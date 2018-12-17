@@ -34,6 +34,9 @@
   </header>
   <main role="main">
     <h2>Grades</h2>
+    <br>
+    <h3>GPA: {{gpa}}</h3>
+    <br>
     <table style="size:200%">
     <tr>
       <th><h3>Course Code</h3></th>
@@ -43,15 +46,15 @@
       <th><h3>Credits</h3></th>
     {% for grade in grades %}
       <tr>
-        <th>{{grade[0]}}</th>
         <th>{{grade[1]}}</th>
         <th>{{grade[2]}}</th>
-        {% if grade[3] == None %}
+        <th>{{grade[3]}}</th>
+        {% if grade[4] == None %}
           <th>-</th> 
         {% else %}
-          <th>{{grade[3]}}</th>
+          <th>{{grade[4]}}</th>
         {% endif %}
-        <th>{{grade[4]}}</th>
+        <th>{{grade[5]}}</th>
       </tr>
     {% endfor %}
     </table>
