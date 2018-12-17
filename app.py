@@ -9,11 +9,27 @@ dbm = DBManager('root','')
 @app.route("/")
 @app.route("/student")
 def students():
+	if session['uname'] != None:
+		return render_template('home.html')
 	return render_template('index.html')
 
 @app.route("/faculty")
 def faculty():
+	if session['uname'] != None:
+		return render_template('home.html')
 	return render_template('professor_login.html')
+
+@app.route("/home")
+def home():
+	if session['access'] == "student":
+		return render_template('student_home.html')
+	elif session['access'] == "professor":
+		return render_template('professor_home.html')
+	elif session['access'] == "admin":
+		return render_template('admin_home.html')
+	else:
+		logout()
+		return "Error in Session Please re log in"
 
 @app.route("/student_login", methods=['POST'])
 def student_login():
