@@ -145,14 +145,18 @@ class DBManager:
 	def enrol(self,uid,cid):
 		seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid).scalar()
 		totalseats = self.session.query(self.classes.max_students).filter(self.classes.cid==cid).scalar()
+		alreadytaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.sid==uid).filter(self.taking.cid==cid).scalar()
 		if totalseats - seatstaken > 0:
-			new_taking = self.taking(taid = None,sid=uid,cid=cid)
-			self.session.add(new_taking)
-			try:
-				self.session.commit()
-				return
-			except MySQLdb.Error, e:
-				return e.args
+			if alreadytaken > 0:
+				new_taking = self.taking(taid = None,sid=uid,cid=cid)
+				self.session.add(new_taking)
+				try:
+					self.session.commit()
+					return
+				except MySQLdb.Error, e:
+					return e.args
+			else:
+				raise ValueError("You cannot enroll in a class twice")
 		else:
 			raise ValueError("No more Seats Available: Not Enrolled")
 
@@ -190,6 +194,17 @@ class DBManager:
 		plans = self.session.query(self.planned.cid).filter(self.planned.sid==uid).all()
 		for plan in plans:
 			self.enrol(uid,plan[0])
+
+	def get_plan_schedule(self,sid,semester):
+		classes = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
+								self.classes.department,self.classes.credits,self.planned.sid).select_from(self.classes).join(self.planned).filter(
+								self.taking.sid==sid and self.classes.semester==semester).all()
+		cids = [cl[0] for cl in classes]
+		profs = self.session.query(self.teaching.cid,self.teaching.pid,self.users.name).select_from(self.teaching).join(self.professors).join(
+									self.users).filter(self.teaching.cid.in_(cids)).all()
+		output = [list(cl)+[prof[2]] for prof in profs for cl in classes if cl[0] == prof[0]]
+			
+		return output	
 
 	def change_salary(self,uid,new_salary):
 		professor = self.session.query(self.professors).filter(self.professors.uid==uid).one()
