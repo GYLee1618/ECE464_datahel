@@ -198,13 +198,10 @@ class DBManager:
 								self.taking.sid==sid and self.classes.semester==semester).all()
 		cids = [cl[0] for cl in classes]
 		profs = self.session.query(self.teaching.cid,self.teaching.pid,self.users.name).select_from(self.teaching).join(self.professors).join(
-									self.users).filter(self.teaching.cid.in_(cids))
+									self.users).filter(self.teaching.cid.in_(cids)).all()
 		output = [list(cl)+[prof[2]] for prof in profs for cl in classes if cl[0] == prof[0]]
 			
-		return classes
-	def get_profs(self,sid,semester):
-
-			
+		return output			
 
 	def get_class_info(self,cid):
 		cla = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
