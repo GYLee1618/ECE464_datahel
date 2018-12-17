@@ -196,7 +196,14 @@ class DBManager:
 		classes = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
 								self.classes.department,self.classes.credits,self.taking.sid).select_from(self.classes).join(self.taking).filter(
 								self.taking.sid==sid and self.classes.semester==semester).all()
+		cids = [cl[0] for cl in classes]
+		profs = self.session.query(self.teaching.cid,self.teaching.pid,self.users.name).select_from(self.teaching).join(self.professors).join(
+									self.users).filter(self.teaching.cid.in_(cids))
+		output = [list(cl)+[prof[2]] for prof in profs for cl in classes if cl[0] == prof[0]]
+			
 		return classes
+	def get_profs(self,sid,semester):
+
 			
 
 	def get_class_info(self,cid):
@@ -236,6 +243,7 @@ class DBManager:
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
+	schedule = dbm.get_schedule(1,"Fall 2018")
 	import pdb
 	pdb.set_trace()
 
