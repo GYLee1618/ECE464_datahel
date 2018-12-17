@@ -6,11 +6,26 @@ app.secret_key = "rexrexrex"
 dbm = DBManager('root','')
 
 @app.route("/")
+def home():
+	if 'access' in session:
+		if session['access'] == "student":
+			return render_template('student_home.html')
+		elif session['access'] == "professor":
+			return render_template('faculty_home.html')
+		elif session['access'] == "admin":
+			return render_template('admin_home.html')
+		else:
+			redirect("logout")
+	else:
+		return render_template('index.html')
+
 @app.route("/student")
 def students():
 	if 'uname' in session:
 		if session['access'] == "student":
-			return render_template('student_home.html')
+			return render_template('student_home.html')	
+		else:
+			return redirect("/")
 	return render_template('index.html')
 
 @app.route("/faculty")
@@ -18,18 +33,18 @@ def faculty():
 	if 'uname' in session:
 		if session['access'] == "professor":
 			return render_template('faculty_home.html')
+		else:
+			return redirect("/")
 	return render_template('professor_login.html')
 
-@app.route("/home")
-def home():
-	if session['access'] == "student":
-		return render_template('student_home.html')
-	elif session['access'] == "professor":
-		return render_template('faculty_home.html')
-	elif session['access'] == "admin":
-		return render_template('admin_home.html')
-	else:
-		return redirect("logout")
+@app.route("/admin")
+def admin():
+	if 'uname' in session:
+		if session['access'] == "admin":
+			return render_template('faculty_home.html')
+		else:
+			return redirect("/")
+	return render_template('admin_login.html')
 
 @app.route("/student_login", methods=['POST'])
 def student_login():
@@ -42,7 +57,7 @@ def student_login():
 		session['access'] = "student" 
 		return redirect("student")
 	else:
-		return redirect("login")
+		return redirect("logout")
 
 @app.route("/professor_login", methods=['POST'])
 def professor_login(uname,pwd):
