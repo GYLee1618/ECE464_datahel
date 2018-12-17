@@ -207,10 +207,10 @@ class DBManager:
 
 	def get_grades(self,sid, semester=None):
 		if semester != None:
-			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking).join(
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade,self.classes.credits).select_from(self.taking).join(
 				self.classes).filter(self.taking.sid==sid).all()
 		else:
-			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade).select_from(self.taking).join(
+			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade,self.classes.credits).select_from(self.taking).join(
 				self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester).all()
 		return result
 
