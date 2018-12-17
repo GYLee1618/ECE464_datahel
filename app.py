@@ -5,11 +5,11 @@ app = Flask(__name__)
 dbm = DBManager('root','')
 
 @app.route("/")
-def hello():
+def students():
 	return render_template('index.html')
-@app.route("/path")
-def function_to_run():
-	return 
+@app.route("/faculty")
+def faculty():
+	return render_template('professor_login.html')
 
 @app.route("/student_login", methods=['POST'])
 def student_login():

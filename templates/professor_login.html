@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Asperion HTML5 template</title>
+  <title>Faculty Login</title>
   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 
@@ -11,7 +11,7 @@
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700'>
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700'>
 
-      <link rel="stylesheet" href="css/style.css">
+      <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
 
   
 </head>
@@ -34,7 +34,7 @@
     <div class="limiter">
     <div class="container-login100">
       <div class="wrap-login100 p-t-50 p-b-90">
-        <form class="login_student" action="student_login" method="POST">
+        <form class="login_professor" action="professor_login" method="POST">
           <span class="login100-form-title p-b-51">
             Login
           </span>

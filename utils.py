@@ -133,7 +133,7 @@ class DBManager:
 		else:
 			raise ValueError('Invalid user type!')
 
-		return self.session.query(self.users).select_from(self.users).join(utable).filter(self.users.uname==uname).filter(self.users.password==pwd).scalar() is not None 
+		return self.session.query(self.users.uid).select_from(self.users).join(utable).filter(self.users.uname==uname).filter(self.users.password==pwd).scalar()
 
 	def enrol(self,uid,cid):
 		seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid).scalar()
