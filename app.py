@@ -7,6 +7,7 @@ app.secret_key = "rexrexrex"
 dbm = DBManager('root','')
 
 @app.route("/")
+@app.route("/student")
 def students():
 	return render_template('index.html')
 
