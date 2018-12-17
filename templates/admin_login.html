@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Faculty Login</title>
+  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300'>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700'>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700'>
+
+      <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+
+  
+</head>
+
+<body>
+
+  <div class="line"></div>
+<div class="wrapper">
+  <header role="banner">
+    <nav role="navigation">
+      <h1><a href="#">Cooper Union</a></h1>
+      <ul class="nav-ul">
+        <li><a href="#">Students</a></li>
+        <li><a href="#">Faculty</a></li>
+        <li><a href="#">Administrator</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main role="main">
+    <div class="limiter">
+    <div class="container-login100">
+      <div class="wrap-login100 p-t-50 p-b-90">
+        <form class="login_professor" action="professor_login" method="POST">
+          <span class="login100-form-title p-b-51">
+            Faculty Login
+          </span>
+
+          
+          <div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
+            <input class="input100" type="text" name="username" placeholder="Username">
+            <span class="focus-input100"></span>
+          </div>
+          
+          
+          <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
+            <input class="input100" type="password" name="pass" placeholder="Password">
+            <span class="focus-input100"></span>
+          </div>
+          
+          <div class="flex-sb-m w-full p-t-3 p-b-24">
+            <div class="contact100-form-checkbox">
+              <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+              <label class="label-checkbox100" for="ckb1">
+                Remember me
+              </label>
+            </div>
+
+            <div>
+              <a href="#" class="txt1">
+                Forgot?
+              </a>
+            </div>
+          </div>
+
+          <div class="container-login100-form-btn m-t-17">
+            <button class="login100-form-btn">
+              Login
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+<footer>
+  <p class="copy">&copy; Alex Devero Design 2014</p>
+</footer>
+<div style='position: absolute; bottom: 0', class="line"></div>
+
+  
+  
+
+    <!-- <script  src="js/index.js"></script> -->
+
+
+
+
+</body>
+
+</html>
