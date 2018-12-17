@@ -150,7 +150,7 @@ class DBManager:
 			raise ValueError("No more Seats Available: Not Enrolled")
 
 	def drop(self,uid,cid):
-		obj = self.session.query(self.taking).filter(self.taking.sid==uid).filter(self.taking.cid==cid).all();
+		obj = self.session.query(self.taking).filter(self.taking.sid==uid).filter(self.taking.cid==cid).all()
 		if len(obj) != 0:
 			self.session.delete(obj[0])
 			try:
@@ -161,7 +161,7 @@ class DBManager:
 			raise KeyError("The user/class pair does not exist")
 
 	def plan(self,uid,cid):
-		new_plan = self.planned(taid = None,sid=uid,cid=cid)
+		new_plan = self.planned(plid = None,sid=uid,cid=cid)
 		self.session.add(new_plan)
 		try:
 			self.session.commit()
@@ -169,8 +169,20 @@ class DBManager:
 			raise ValueError("something went wrong: contact Isaac Alboucai at (555)-555-5555 to get it fixed")
 
 	def unplan(self,uid,cid):
-		obj = self.session.query(self.taking).filter(self.taking.sid==uid).filter(self.taking.cid==cid).one()
+		obj = self.session.query(self.planned).filter(self.planned.sid==uid).filter(self.planned.cid==cid).all()
+		if len(obj) != 0:
+			self.session.delete(obj[0])
+			try:
+				self.session.commit()
+			except:
+				raise ValueError("something went wrong: contact Isaac Alboucai at (555)-555-5555 to get it fixed")
+		else:
+			raise KeyError("The user/class pair does not exist")
 
+	def enrol_in_plan(self,uid):
+		plans = self.session.query(self.planned.cid).filter(self.planned.sid==uid).all()
+		for plan in plans:
+			self.enrol(uid,plan[0])
 
 	def change_salary(self,uid,new_salary):
 		professor = self.session.query(self.professors).filter(self.professors.uid==uid).one()
@@ -224,22 +236,6 @@ class DBManager:
 
 if __name__ == '__main__':
 	dbm = DBManager('root','')
-	test = dbm.drop(0,0)
-	sok = dbm.get_prof_info(3)
-	print sok
-	dbm.change_salary(3,250000.2)
-	sok = dbm.get_prof_info(3)
-	print sok 
-	classes = dbm.get_schedule(1,"Fall 2018")
-	print classes
-	c1 = dbm.get_class_info(464)
-	print c1
-	grades = dbm.get_grades(1,"Fall 2018")
-	print grades
-
-	stud = dbm.get_student_info(1)
-	print stud
-
 	import pdb
 	pdb.set_trace()
 
