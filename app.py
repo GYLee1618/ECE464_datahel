@@ -71,7 +71,9 @@ def student_login():
 		return redirect("logout")
 
 @app.route("/professor_login", methods=['POST'])
-def professor_login(uname,pwd):
+def professor_login():
+	uname = request.form['username']
+	pwd = request.form['pass']
 	uid = dbm.authenticate(uname,pwd,'professors')
 	if uid != None:
 		session['uname'] = uname
@@ -82,7 +84,9 @@ def professor_login(uname,pwd):
 		return "You done fucked up"
 
 @app.route("/admin_login", methods=['POST'])
-def admin_login(uname,pwd):
+def admin_login():
+	uname = request.form['username']
+	pwd = request.form['pass']
 	uid = dbm.authenticate(uname,pwd,'adminstrators')
 	if uid != None:
 		session['uname'] = uname
@@ -91,6 +95,30 @@ def admin_login(uname,pwd):
 		return "You In admin"
 	else:
 		return "You done fucked up"
+
+@app.route("/drop", methods=['POST'])
+def drop_class():
+	cids = request.form.getlist('drop')
+	dropped_cids = list()
+	class_info = list()
+	if 'uid' in session:
+		if session['access'] == 'student':
+			try:
+				for cid in cids:
+					dbm.drop(session['uid'],cid)
+					dropped_cids += [cid]
+			except(KeyError):
+				pass
+			except(ValueError):
+				pass
+			for cid in dropped_cids:
+				class_info += [dbm.get_class_info(cid)]
+			return render_template("dropped.html",class_info=class_info)
+		else:
+			return redirect("401")
+	else:
+		return redirect("/")
+	
 
 @app.route("/logout")
 def logout():
