@@ -33,7 +33,32 @@
     </nav>
   </header>
   <main role="main">
-    <h2>Classes</h2>
+
+     <h2>Planned Classes</h2>
+    <form action="plan_enrol" method="POST">
+      <table style="size:200%">
+        <tr>
+          <th><h3>Course Code</h3></th>
+          <th><h3>Course Name</h3></th>
+          <th><h3>Meeting Time</h3></th>
+          <th><h3>Professor</h3></th>
+          <th><h3>Description</h3></th>
+          <th><h3>Credits</h3></th>
+        </tr>
+        {% for class in plan %}
+        <tr>
+          <th>{{class[1]}}</th>
+          <th>{{class[2]}}</th>
+          <th>{{class[5]}}</th>
+          <th>{{class[-1]}}</th>
+          <th>{{class[3]}}</th>
+          <th>{{class[7]}}</th>
+        </tr>
+        {% endfor %}
+      </table>
+      <button>Enrol</button>
+    </form>
+    <h2>Available Classes</h2>
     <form action="add_plan" method="POST">
       <table style="size:200%">
         <tr>
