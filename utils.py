@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
 from sqlalchemy import exc
 from datetime import datetime
+from passlib.hash import sha256_crypt
 
 class DBManager:
 	def __init__(self,uname,pwd):
@@ -42,16 +43,18 @@ class DBManager:
 			email = uname+'@cooper.edu'
 
 			password = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
+			passhash = sha256_crypt.encrypt(password)
+
 			# TODO: fix this so its not absolute garbage lol
 
-			new_user = self.users(ssn=ssn, uname=uname, password=password,name=name,email=email,
+			new_user = self.users(ssn=ssn, uname=uname, password=passhash,name=name,email=email,
 									address=address,date_of_birth=DOB)
 
 			self.session.add(new_user)
 
 			try:
 				self.session.commit()
-				return new_user.uid,new_user.uname, new_user.email, new_user.password
+				return new_user.uid,new_user.uname, new_user.email, password
 			except exc.IntegrityError, e:
 				self.session.rollback()
 				if '\'ssn\'' in e.orig.args[1]:
@@ -133,7 +136,11 @@ class DBManager:
 		else:
 			raise ValueError('Invalid user type!')
 
-		return self.session.query(self.users.uid).select_from(self.users).join(utable).filter(self.users.uname==uname).filter(self.users.password==pwd).scalar()
+		passhash = self.session.query(self.users.uid,self.users.password).select_from(self.users).join(utable).filter(self.users.uname==uname).one()
+		
+		if sha256_crypt.verify(pwd, passhash[1]):
+			return passhash[0]
+		return
 
 	def enrol(self,uid,cid):
 		seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid).scalar()
