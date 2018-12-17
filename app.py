@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template
 from utils import DBManager
 
-app = Flask(__name__,template_folder='')
+app = Flask(__name__)
 dbm = DBManager('root','')
 
 @app.route("/")
