@@ -34,7 +34,9 @@ CREATE TABLE administrators ( aid INT NOT NULL AUTO_INCREMENT,
 );
 
 CREATE TABLE classes(cid INT NOT NULL AUTO_INCREMENT,
+	course_code CHAR(16)
 	name CHAR(16),	
+	description TEXT,
 	semester CHAR(16),
 	meeting_times CHAR(32),
 	department CHAR(32),
@@ -84,4 +86,19 @@ CREATE TABLE planned ( plid INT NOT NULL AUTO_INCREMENT,
 -- insert into users values (4, '916460110', 'kfoxhall', 'tTprsmnXhf', 'Kyle Foxhall', 'kfoxhall@cooper.edu', '5034 Wiitanen St, Fullerton, CA 92833', '20000121');
 -- insert into professors values (2, 4, 'Physics', 52543.89);
 
+<<<<<<< HEAD
+insert into classes values (464, 'ECE464','Databases', 'Learn About Databases', 'Fall 2018', 'Tue 1800-2050','Electrical Engineering' , 3.0, 30);
+insert into classes values (2231, 'PH351','FLuids','Learn about fluids with Yecko','Fall 2018', 'Tue 0900-1150','Physics', 3.0, 20);
+insert into classes values (227, 'ECE464','Databases', 'Learn about databases but in the past', 'Fall 2016', 'Wed 1600-1750, Thu 1200-1250','Electrical Engineering', 3.0, 30);
+
+insert into teaching values (1, 3, 464);
+insert into teaching values (2, 4, 2231);
+insert into teaching values (3, 3, 227);
+
+insert into taking values (1, 2, 464, 3);
+insert into taking values (4, 1, 227, 2);
+insert into taking values (2, 2, 2231, NULL);
+insert into taking values (3, 1, 2231, NULL);
+=======
+>>>>>>> origin/master
 

@@ -102,8 +102,8 @@ class DBManager:
 		self.session.commit()
 		return uid, uname, email, password			
 
-	def new_class(self, semester, meeting_times, department, credits, max_students):
-		new_class = self.classes(semester=semester,meeting_times=meeting_times,department=department,credits=credits,max_students=max_students)
+	def new_class(self,course_code, name, description, semester, meeting_times, department, credits, max_students):
+		new_class = self.classes(name=name,semester=semester,meeting_times=meeting_times,department=department,credits=credits,max_students=max_students)
 		self.session.add(new_class)
 		self.session.commit()
 		return new_class.cid
@@ -216,7 +216,7 @@ class DBManager:
 			raise NotImplementedError
 
 	def get_schedule(self,sid,semester):
-		classes = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
+		classes = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.description,self.classes.semester,self.classes.meeting_times,
 								self.classes.department,self.classes.credits,self.taking.sid).select_from(self.classes).join(self.taking).filter(
 								self.taking.sid==sid and self.classes.semester==semester).all()
 		cids = [cl[0] for cl in classes]
@@ -265,6 +265,18 @@ class DBManager:
 if __name__ == '__main__':
 	dbm = DBManager('root','')
 	schedule = dbm.get_schedule(1,"Fall 2018")
+	#def new_class(self,course_code, name, description, semester, meeting_times, department, credits, max_students):
+	dbm.new_class("ME395","Thermodynamics","Another Thermo Course","Spring 2019","Wed 2-5", "Mechanical Engineering",3.0,25)
+	dbm.new_class("ME412","Autonomous Mobile Robots","ROBOTS!!!","Spring 2019","Thurs 6-9", "Mechanical Engineering",3.0,25)
+	dbm.new_class("ECE161","Programming Languages","POINTERS!!","Spring 2019","Mon 2-5", "Electrical Engineering",3.0,25)
+	dbm.new_class("ECE150","Digital Logic Design","NO SLEEP FOR YOU!!","Spring 2019","Tues 2-5", "Electrical Engineering",3.0,30)
+	dbm.new_class("ECE335","Engineering Electromagnetics","Some Gabario!","Spring 2019","Thurs 8-11", "Electrical Engineering",3.0,25)
+	dbm.new_class("ME395","Thermodynamics","Another Thermo Course","Spring 2017","Wed 2-5", "Mechanical Engineering",3.0,25)
+	dbm.new_class("ME412","Autonomous Mobile Robots","ROBOTS!!!","Spring 2017","Thurs 6-9", "Mechanical Engineering",3.0,25)
+	dbm.new_class("ECE161","Programming Languages","POINTERS!!","Spring 2017","Mon 2-5", "Electrical Engineering",3.0,25)
+	dbm.new_class("ECE150","Digital Logic Design","NO SLEEP FOR YOU!!","Spring 2017","Tues 2-5", "Electrical Engineering",3.0,30)
+	dbm.new_class("ECE335","Engineering Electromagnetics","Some Gabario!","Spring 2017","Thurs 8-11", "Electrical Engineering",3.0,25)
+
 	import pdb
 	pdb.set_trace()
 
