@@ -1,22 +1,21 @@
-from flask import Flask, request, render_template, session
+from flask import Flask, request, render_template, session, redirect
 from utils import DBManager
 
 app = Flask(__name__)
 app.secret_key = "rexrexrex"
-
 dbm = DBManager('root','')
 
 @app.route("/")
 @app.route("/student")
 def students():
-	if session['uname'] != None:
-		return render_template('home.html')
+	if 'uname' in session:
+		return render_template('student_home.html')
 	return render_template('index.html')
 
 @app.route("/faculty")
 def faculty():
 	if session['uname'] != None:
-		return render_template('home.html')
+		return render_template('faculty_home.html')
 	return render_template('professor_login.html')
 
 @app.route("/home")
@@ -24,12 +23,11 @@ def home():
 	if session['access'] == "student":
 		return render_template('student_home.html')
 	elif session['access'] == "professor":
-		return render_template('professor_home.html')
+		return render_template('faculty_home.html')
 	elif session['access'] == "admin":
 		return render_template('admin_home.html')
 	else:
-		logout()
-		return "Error in Session Please re log in"
+		return redirect("logout")
 
 @app.route("/student_login", methods=['POST'])
 def student_login():
@@ -40,9 +38,9 @@ def student_login():
 		session['uname'] = uname
 		session['uid'] = uid 
 		session['access'] = "student" 
-		return "You In student " + str(session['uid'])
+		return redirect("student")
 	else:
-		return "You done fucked up"
+		return redirect("login")
 
 @app.route("/professor_login", methods=['POST'])
 def professor_login(uname,pwd):
@@ -71,6 +69,7 @@ def logout():
 	session.pop('uname',None)
 	session.pop('uid',None)
 	session.pop('access',None)
+	return redirect("")
 
 if __name__ == '__main__':
 	app.run('localhost',port=9001)
