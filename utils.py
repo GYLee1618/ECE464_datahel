@@ -231,7 +231,18 @@ class DBManager:
 								self.classes.department,self.classes.credits).filter(self.classes.cid==cid).one()
 		return cla
 
+	def get_classes(self,semester):
+		classes = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.description,self.classes.semester,self.classes.meeting_times,
+								self.classes.department,self.classes.credits).select_from(self.classes).filter(
+								self.classes.semester==semester).all()
+		cids = [cl[0] for cl in classes]
+		profs = self.session.query(self.teaching.cid,self.teaching.pid,self.users.name).select_from(self.teaching).join(self.professors).join(
+									self.users).filter(self.teaching.cid.in_(cids)).all()
+		output = [list(cl)+[prof[2]] for prof in profs for cl in classes if cl[0] == prof[0]]
+			
+		return output		
 
+	
 	def get_grades(self,sid, semester=None):
 		if semester == None:
 			result = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.semester,self.taking.grade,self.classes.credits).select_from(self.taking).join(

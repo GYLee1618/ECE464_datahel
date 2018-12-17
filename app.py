@@ -23,6 +23,14 @@ def get_current_sem():
 		semester = 'Spring {}'.format(now.year)
 	return semester
 
+def get_next_sem():
+	now = datetime.now()
+	if now.month >= 6:
+		semester = 'Spring {}'.format(now.year+1)
+	else:
+		semester = 'Fall {}'.format(now.year)
+	return semester
+
 
 @app.route("/")
 @app.route("/home")
@@ -53,6 +61,15 @@ def studentGrades():
 	if 'uname' in session:
 		if session['access'] == "student":
 			return render_template('student_grades.html',grades=dbm.get_grades(session['uid']),gpa=dbm.get_gpa(session['uid']))
+		else:
+			return redirect("/")
+	return render_template('index.html')
+
+@app.route("/student_scheduling")
+def studentSchedule():
+	if 'uname' in session:
+		if session['access'] == "student":
+			return render_template('student_schedule.html',classes=get_classes(get_next_sem()))
 		else:
 			return redirect("/")
 	return render_template('index.html')
