@@ -140,9 +140,16 @@ def drop_class():
 @app.route("/account")	
 def account():
 	if 'uid' in session:
+		return render_template("account.html",error="")
+	else:
+		return redirect("401")
+
+@app.route("/change_pwd", methods=['POST'])
+def change_pwd():
+	if 'uid' in session:
 		try:
-			dbm.change_password(session['uid']request['oldpass'],request['newpass'])
-			return render_template("account.html",error="")
+			dbm.change_password(session['uid'],request.form['oldpass'],request.form['newpass'])
+			return render_template("account.html",error="Successfully Changed Password")
 		except ValueError:
 			return render_template("account.html",error="Wrong Password")				
 	else:
