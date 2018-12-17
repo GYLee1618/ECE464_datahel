@@ -46,7 +46,11 @@
         <th>{{grade[0]}}</th>
         <th>{{grade[1]}}</th>
         <th>{{grade[2]}}</th>
-        <th>{{grade[3]}}</th>
+        {% if grade[3] == None %}
+          <th>-</th> 
+        {% else %}
+          <th>{{grade[3]}}</th>
+        {% endif %}
         <th>{{grade[4]}}</th>
       </tr>
     {% endfor %}

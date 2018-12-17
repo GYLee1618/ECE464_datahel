@@ -38,7 +38,7 @@ def students():
 			return redirect("/")
 	return render_template('index.html')
 
-@app.route("/student/grades")
+@app.route("/grades")
 def studentGrades():
 	if 'uname' in session:
 		if session['access'] == "student":

@@ -93,6 +93,7 @@ insert into teaching values (2, 4, 2231);
 insert into teaching values (3, 3, 227);
 
 insert into taking values (1, 2, 464, 3);
+insert into taking values (4, 1, 227, 2);
 insert into taking values (2, 2, 2231, NULL);
 insert into taking values (3, 1, 2231, NULL);
 

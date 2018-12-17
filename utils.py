@@ -41,7 +41,7 @@ class DBManager:
 
 			email = uname+'@cooper.edu'
 
-			password = 'burp'
+			password = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
 			# TODO: fix this so its not absolute garbage lol
 
 			new_user = self.users(ssn=ssn, uname=uname, password=password,name=name,email=email,
@@ -210,12 +210,13 @@ class DBManager:
 
 
 	def get_grades(self,sid, semester=None):
-		if semester != None:
+		if semester == None:
 			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade,self.classes.credits).select_from(self.taking).join(
-				self.classes).filter(self.taking.sid==sid).all()
+				self.classes).filter(self.taking.sid==sid).order_by(self.classes.semester,self.classes.cid).all()
 		else:
 			result = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.taking.grade,self.classes.credits).select_from(self.taking).join(
-				self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester).all()
+				self.classes).filter(self.taking.sid==sid).filter(self.classes.semester==semester).order_by(self.classes.semester,self.classes.cid).all()
+
 		return result
 
 
