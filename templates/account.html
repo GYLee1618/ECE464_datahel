@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Student Self-Service Home</title>
+  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300'>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700'>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700'>
+
+      <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+
+  
+</head>
+
+<body>
+
+  <div class="line"></div>
+<div class="wrapper">
+  <header role="banner">
+    <nav role="navigation">
+      <h1><a href="#">Cooper Union</a></h1>
+      <ul class="nav-ul">
+        <li><a href="home">Home</a></li>
+        <li><a href="scheduling">Scheduling</a></li>
+        <li><a href="grades">Grades</a></li>
+        <li><a href="#">Account</a></li>
+        <li><a href="logout">Log Out</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main role="main">
+    <h2>Account Management</h2>
+    <form action="change_pwd" method="POST">
+      {{error}}
+      <div class="wrap-input100 validate-input m-b-16" data-validate = "Old Password is required">
+        <input class="input100" type="password" name="oldpass" placeholder="Old Password">
+        <span class="focus-input100"></span>
+      </div>
+      
+      
+      <div class="wrap-input100 validate-input m-b-16" data-validate = "New Password is required">
+        <input class="input100" type="password" name="newpass" placeholder="New Password">
+        <span class="focus-input100"></span>
+      </div>
+      
+      <div class="container-login100-form-btn m-t-17">
+        <button class="login100-form-btn">
+          Change Password
+        </button>
+      </div>
+    </form>
+  </main>
+</div>
+<footer>
+  <p class="copy">&copy; Alex Devero Design 2014</p>
+</footer>
+<div style='position: absolute; bottom: 0', class="line"></div>
+
+  
+  
+
+    <!-- <script  src="js/index.js"></script> -->
+
+
+
+
+</body>
+
+</html>
