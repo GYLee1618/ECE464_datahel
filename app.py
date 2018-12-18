@@ -6,7 +6,6 @@ app = Flask(__name__)
 app.secret_key = "rexrexrex"
 dbm = DBManager('root','')
 
-
 def get_current_sem():
 	now = datetime.now()
 	if now.month >= 6:
@@ -29,15 +28,45 @@ def get_next_sem():
 def home():
 	if 'access' in session:
 		if session['access'] == "student":
-			return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],session['semester']))
+			return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],get_current_sem()))
 		elif session['access'] == "professor":
-			return render_template('faculty_home.html')
+			return render_template('faculty_home.html',schedule=dbm.get_faculty_schedule(session['uid'],get_current_sem()))
 		elif session['access'] == "admin":
 			return render_template('admin_home.html')
 		else:
 			redirect("logout")
 	else:
 		return render_template('index.html')
+
+@app.route("/account")	
+def account():
+	if 'uid' in session:
+		if session['access'] == 'student':
+			return render_template("account.html",error="")
+		elif session['access'] == 'professor': 
+			return render_template("professor_account.html",error="")
+		else:
+			return redirect("/")
+	else:
+		return redirect("401")
+
+@app.route("/change_pwd", methods=['POST'])
+def change_pwd():
+	if 'uid' in session:
+		try:
+			dbm.change_password(session['uid'],request.form['oldpass'],request.form['newpass'])
+			return render_template("account.html",error="Successfully Changed Password")
+		except ValueError:
+			return render_template("account.html",error="Wrong Password")				
+	else:
+		return redirect("401")
+
+@app.route("/logout")
+def logout():
+	session.pop('uname',None)
+	session.pop('uid',None)
+	session.pop('access',None)
+	return redirect("")
 
 @app.route("/student")
 def students():
@@ -48,11 +77,35 @@ def students():
 			return redirect("/")
 	return render_template('index.html')
 
+@app.route("/student_login", methods=['POST'])
+def student_login():
+	uname = request.form['username']
+	pwd = request.form['pass']
+	try:
+		uid = dbm.authenticate(uname,pwd,'students')
+		if uid != None:
+			session['uname'] = uname
+			session['uid'] = uid 
+			session['access'] = "student" 
+			session['semester'] = get_current_sem()
+			return redirect("student")
+		else:
+			return redirect("logout")
+	except:
+		return redirect("logout")
+
 @app.route("/grades")
 def studentGrades():
 	if 'uname' in session:
 		if session['access'] == "student":
 			return render_template('student_grades.html',grades=dbm.get_grades(session['uid']),gpa=dbm.get_gpa(session['uid']))
+		if session['access'] == "professor":
+			classes = dbm.get_faculty_schedule(session['uid'],get_current_sem())
+			rosters = dict()
+			for cl in classes:
+				rosters[cl[1]] = dbm.get_roster(cl[0])
+
+			return render_template('faculty_grades.html',rosters=rosters,classes=classes)
 		else:
 			return redirect("/")
 	return render_template('index.html')
@@ -61,68 +114,10 @@ def studentGrades():
 def studentSchedule():
 	if 'uname' in session:
 		if session['access'] == "student":
-			return render_template('student_scheduling.html',schedule=dbm.get_classes(get_next_sem()))
+			return render_template('student_scheduling.html',plan=dbm.get_plan(session['uid'],get_next_sem()),schedule=dbm.get_classes(get_next_sem()))
 		else:
 			return redirect("/")
 	return render_template('index.html')
-
-@app.route("/faculty")
-def faculty():
-	if 'uname' in session:
-		if session['access'] == "professor":
-			return render_template('faculty_home.html')
-		else:
-			return redirect("/")
-	return render_template('professor_login.html')
-
-@app.route("/admin")
-def admin():
-	if 'uname' in session:
-		if session['access'] == "admin":
-			return render_template('admin_home.html')
-		else:
-			return redirect("/")
-	return render_template('admin_login.html')
-
-@app.route("/student_login", methods=['POST'])
-def student_login():
-	uname = request.form['username']
-	pwd = request.form['pass']
-	uid = dbm.authenticate(uname,pwd,'students')
-	if uid != None:
-		session['uname'] = uname
-		session['uid'] = uid 
-		session['access'] = "student" 
-		session['semester'] = get_current_sem()
-		return redirect("student")
-	else:
-		return redirect("logout")
-
-@app.route("/professor_login", methods=['POST'])
-def professor_login():
-	uname = request.form['username']
-	pwd = request.form['pass']
-	uid = dbm.authenticate(uname,pwd,'professors')
-	if uid != None:
-		session['uname'] = uname
-		session['uid'] = uid 
-		session['access'] = "professor" 
-		return "You In professor"
-	else:
-		return "You done fucked up"
-
-@app.route("/admin_login", methods=['POST'])
-def admin_login():
-	uname = request.form['username']
-	pwd = request.form['pass']
-	uid = dbm.authenticate(uname,pwd,'adminstrators')
-	if uid != None:
-		session['uname'] = uname
-		session['uid'] = uid 
-		session['access'] = "admin" 
-		return "You In admin"
-	else:
-		return "You done fucked up"
 
 @app.route("/drop", methods=['POST'])
 def drop_class():
@@ -147,31 +142,107 @@ def drop_class():
 	else:
 		return redirect("/")
 
-@app.route("/account")	
-def account():
+@app.route("/add_plan", methods=['POST'])
+def add_plan():
+	cids = request.form.getlist('add_plan')
+	planned_cids = list()
+	class_info = list()
 	if 'uid' in session:
-		return render_template("account.html",error="")
+		if session['access'] == 'student':
+			try:
+				for cid in cids:
+					dbm.plan(session['uid'],cid)
+					planned_cids += [cid]
+			except(KeyError):
+				pass
+			except(ValueError):
+				pass
+			for cid in planned_cids:
+				class_info += [dbm.get_class_info(cid)]
+			return render_template("planned.html",class_info=class_info)
+		else:
+			return redirect("401")
 	else:
-		return redirect("401")
+		return redirect("/")
 
-@app.route("/change_pwd", methods=['POST'])
-def change_pwd():
+@app.route("/plan_enrol", methods=['POST'])
+def enrol_plan():
 	if 'uid' in session:
-		try:
-			dbm.change_password(session['uid'],request.form['oldpass'],request.form['newpass'])
-			return render_template("account.html",error="Successfully Changed Password")
-		except ValueError:
-			return render_template("account.html",error="Wrong Password")				
+		if session['access'] == 'student':
+			dbm.enrol_in_plan(session['uid'])
+			return render_template("enrolled.html")
+		else:
+			redirect("401")
 	else:
-		return redirect("401")
+		redirect("home")
 
 
-@app.route("/logout")
-def logout():
-	session.pop('uname',None)
-	session.pop('uid',None)
-	session.pop('access',None)
-	return redirect("")
+@app.route("/faculty")
+def faculty():
+	if 'uname' in session:
+		if session['access'] == "professor":
+			return render_template('faculty_home.html',schedule=dbm.get_faculty_schedule(session['uid'],get_current_sem()))
+		else:
+			return redirect("/")
+	return render_template('professor_login.html')
+
+@app.route("/professor_login", methods=['POST'])
+def professor_login():
+	uname = request.form['username']
+	pwd = request.form['pass']
+	try:
+		uid = dbm.authenticate(uname,pwd,'professors')
+		if uid != None:
+			session['uname'] = uname
+			session['uid'] = uid 
+			session['access'] = "professor" 
+			return redirect("faculty")
+		else:
+			return redirect("logout")
+	except:
+		return redirect("logout")
+
+@app.route("/submit_grades/<int:cid>", methods=['POST'])
+def submit_grades(cid):
+	if 'uid' in session:
+		if session['access'] == 'professor':
+			for key in request.form:
+				dbm.change_grade(int(key),cid,request.form[key])
+			return redirect("/grades")
+		else:
+			redirect("401")
+	else:
+		redirect("home")
+
+
+@app.route("/admin")
+def admin():
+	if 'uname' in session:
+		if session['access'] == "admin":
+			return render_template('admin_home.html')
+		else:
+			return redirect("/")
+	return render_template('admin_login.html')
+
+@app.route("/admin_login", methods=['POST'])
+def admin_login():
+	uname = request.form['username']
+	pwd = request.form['pass']
+	try:
+		uid = dbm.authenticate(uname,pwd,'adminstrators')
+		if uid != None:
+			session['uname'] = uname
+			session['uid'] = uid 
+			session['access'] = "admin" 
+			return "You In admin"
+		else:
+			return "You done fucked up"
+	except:
+		return "You done fucked up"
+
+
+
+
 
 if __name__ == '__main__':
 	app.run('localhost',port=9001)

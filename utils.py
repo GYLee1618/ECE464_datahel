@@ -92,12 +92,12 @@ class DBManager:
 
 	def new_administrator(self,ssn, name, address, DOB, uid=None):
 		if uid:
-			new_administrator = self.administrators(sid=None, uid=uid, department=department)
+			new_administrator = self.administrators(uid=uid)
 			self.session.add(new_professor)
 			self.session.commit()
 			return
 		uid, uname, email, password = self.new_user(ssn, name, address, DOB)
-		new_administrator = self.administrators(sid=None, uid=uid, department=department)
+		new_administrator = self.administrators(uid=uid)
 		self.session.add(new_administrator)
 		self.session.commit()
 		return uid, uname, email, password			
@@ -133,9 +133,14 @@ class DBManager:
 
 	def get_roster(self,cid):
 		# roster_query = "SELECT s.name,s.email,s.major FROM taking t JOIN students s on t.sid=s.uid and t.cid=\"{}\";".format(cid)
-		roster = self.session.query(self.users.name,self.users.email,self.students.major).select_from(self.users).join(self.students).join(self.taking).filter(self.taking.cid==cid).all()
+		roster = self.session.query(self.users.name,self.users.email,self.students.major,self.users.uid).select_from(self.users).join(self.students).join(self.taking).filter(self.taking.cid==cid).all()
 
 		return roster
+
+	def change_grade(self,sid,cid,grade):
+		taking = self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.cid==cid).one()
+		taking.grade = grade
+		self.session.commit()
 
 	def authenticate(self,uname,pwd,utype):
 		if utype == 'students':
@@ -157,8 +162,9 @@ class DBManager:
 		seatstaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.cid==cid).scalar()
 		totalseats = self.session.query(self.classes.max_students).filter(self.classes.cid==cid).scalar()
 		alreadytaken = self.session.query(func.count(self.taking.sid)).filter(self.taking.sid==uid).filter(self.taking.cid==cid).scalar()
+
 		if totalseats - seatstaken > 0:
-			if alreadytaken > 0:
+			if alreadytaken == 0:
 				new_taking = self.taking(taid = None,sid=uid,cid=cid)
 				self.session.add(new_taking)
 				try:
@@ -183,7 +189,7 @@ class DBManager:
 			raise KeyError("The user/class pair does not exist")
 
 	def plan(self,uid,cid):
-		new_plan = self.planned(plid = None,sid=uid,cid=cid)
+		new_plan = self.planned(sid=uid,cid=cid)
 		self.session.add(new_plan)
 		try:
 			self.session.commit()
@@ -228,7 +234,7 @@ class DBManager:
 	def get_schedule(self,sid,semester):
 		classes = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.description,self.classes.semester,self.classes.meeting_times,
 								self.classes.department,self.classes.credits,self.taking.sid).select_from(self.classes).join(self.taking).filter(
-								self.taking.sid==sid and self.classes.semester==semester).all()
+								self.taking.sid==sid).filter(self.classes.semester==semester).all()
 		cids = [cl[0] for cl in classes]
 		profs = self.session.query(self.teaching.cid,self.teaching.pid,self.users.name).select_from(self.teaching).join(self.professors).join(
 									self.users).filter(self.teaching.cid.in_(cids)).all()
@@ -264,13 +270,13 @@ class DBManager:
 		return result
 
 	def get_plan(self,sid,semester):
-		classes = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.description,self.classes.semester,self.classes.meeting_times,
-								self.classes.department,self.classes.credits).select_from(self.planned).join(self.students).filter(self.students.sid==sid).join(self.classes).all()
+		classes = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.description,self.classes.semester,self.classes.meeting_times,self.classes.department,self.classes.credits).select_from(self.classes).join(self.planned).filter(
+								self.planned.sid==sid).filter(self.classes.semester==semester).all()
 		cids = [cl[0] for cl in classes]
 		profs = self.session.query(self.teaching.cid,self.teaching.pid,self.users.name).select_from(self.teaching).join(self.professors).join(
 									self.users).filter(self.teaching.cid.in_(cids)).all()
 		output = [list(cl)+[prof[2]] for prof in profs for cl in classes if cl[0] == prof[0]]
-			
+		
 		return output
 
 	def get_prof_info(self,uid):
@@ -291,6 +297,14 @@ class DBManager:
 										).select_from(self.users).join(self.administrators).filter(self.users.uid==uid).all()
 		return admin_info
 
+	def get_faculty_schedule(self,pid,semester):
+		classes = self.session.query(self.classes.cid,self.classes.course_code,self.classes.name,self.classes.description,self.classes.semester,self.classes.meeting_times,
+								self.classes.department,self.classes.credits).select_from(self.classes).join(self.teaching).filter(
+								self.teaching.pid==pid).filter(self.classes.semester==semester).all()
+
+		return classes
+
+
 if __name__ == '__main__':
 	dbm = DBManager('root','')
 	schedule = dbm.get_schedule(1,"Fall 2018")
@@ -298,6 +312,7 @@ if __name__ == '__main__':
 	print(dbm.new_student('139840649', 'Elizabeth Angerhofer', '240 Vantuyle St, Pittsfield, MA 01201', '19990112', 'Electrical Engineering', 2019))
 	print(dbm.new_professor('704452583', 'Eugene Sokolov', '7543 Koomen St, Augusta, GA 30906', '19990327','Electrical Engineering', 132450.8))
 	print(dbm.new_professor('916460110', 'Kyle Foxhall', '5034 Wiitanen St, Fullerton, CA 92833', '20000121', 'Physics', 52543.89))
+	print(dbm.new_administrator('23123124','Gavin Lee','Address','20000121'))
 	#def new_class(self,course_code, name, description, semester, meeting_times, department, credits, max_students):
 	dbm.new_class('ECE464', 'Databases', 'Learn about SQL and NoSQL Databases', 'Fall 2018', 'Tue 1800-2050','Electrical Engineering' , 3.0, 30)
 	dbm.new_class( 'PH351', 'Fluids', 'Learn about liquids and gasses', 'Fall 2018', 'Tue 0900-1150','Physics', 3.0, 20)
@@ -313,10 +328,12 @@ if __name__ == '__main__':
 	dbm.new_class("ECE150","Digital Logic Design","NO SLEEP FOR YOU!!","Spring 2017","Tues 2-5", "Electrical Engineering",3.0,30)
 	dbm.new_class("ECE335","Engineering Electromagnetics","Some Gabario!","Spring 2017","Thurs 8-11", "Electrical Engineering",3.0,25)
 
+	dbm.enrol(2,1)
+	dbm.enrol(3,1)
+
 	dbm.change_teaching(1,4)
 	dbm.change_teaching(2,5)
 	dbm.change_teaching(3,4)
-	dbm.change_teaching(6,4)
 
 
 	import pdb

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Faculty Self-Service Home</title>
+  <title>Student Self-Service Home</title>
   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 
@@ -32,27 +32,26 @@
     </nav>
   </header>
   <main role="main">
-    <h2>Current Schedule</h2>
-      <table style="size:200%">
-        <tr>
-          <th><h3>Course Code</h3></th>
-          <th><h3>Course Name</h3></th>
-          <th><h3>Meeting Time</h3></th>
-          <th><h3>Semester</h3></th>
-          <th><h3>Department</h3></th>
-          <th><h3>Credits</h3></th>
-        </tr>
-        {% for class in schedule %}
-        <tr>
-          <th>{{class[1]}}</th>
-          <th>{{class[2]}}</th>
-          <th>{{class[5]}}</th>
-          <th>{{class[4]}}</th>
-          <th>{{class[6]}}</th>
-          <th>{{class[7]}}</th>
-        </tr>
-        {% endfor %}
-      </table>
+    <h2>Account Management</h2>
+    <form action="change_pwd" method="POST">
+      {{error}}
+      <div class="wrap-input100 validate-input m-b-16" data-validate = "Old Password is required">
+        <input class="input100" type="password" name="oldpass" placeholder="Old Password">
+        <span class="focus-input100"></span>
+      </div>
+      
+      
+      <div class="wrap-input100 validate-input m-b-16" data-validate = "New Password is required">
+        <input class="input100" type="password" name="newpass" placeholder="New Password">
+        <span class="focus-input100"></span>
+      </div>
+      
+      <div class="container-login100-form-btn m-t-17">
+        <button class="login100-form-btn">
+          Change Password
+        </button>
+      </div>
+    </form>
   </main>
 </div>
 <footer>

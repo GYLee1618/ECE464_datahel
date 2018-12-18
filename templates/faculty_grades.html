@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Faculty Self-Service Home</title>
+  <title>Student Self-Service Home</title>
   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 
@@ -32,27 +32,34 @@
     </nav>
   </header>
   <main role="main">
-    <h2>Current Schedule</h2>
+    <h2>Submit Grades</h2>
+      {% for class in classes %}
+      <br><h3>{{class[1]}}</h3>
+      <form action="/submit_grades/{{class[0]}}" method="POST" name={{class[0]}}>
       <table style="size:200%">
         <tr>
-          <th><h3>Course Code</h3></th>
-          <th><h3>Course Name</h3></th>
-          <th><h3>Meeting Time</h3></th>
-          <th><h3>Semester</h3></th>
-          <th><h3>Department</h3></th>
-          <th><h3>Credits</h3></th>
+          <th><h3>Name</h3></th>
+          <th><h3>Email</h3></th>
+          <th><h3>Major</h3></th>
+          <th><h3>Grade</h3></th>
         </tr>
-        {% for class in schedule %}
+        {% for student in rosters[class[1]] %}
         <tr>
-          <th>{{class[1]}}</th>
-          <th>{{class[2]}}</th>
-          <th>{{class[5]}}</th>
-          <th>{{class[4]}}</th>
-          <th>{{class[6]}}</th>
-          <th>{{class[7]}}</th>
+          <th>{{student[0]}}</th>
+          <th>{{student[1]}}</th>
+          <th>{{student[2]}}</th>
+          <th><input name={{student[3]}} type="radio" value=4>A
+              <input name={{student[3]}} type="radio" value=3>B
+              <input name={{student[3]}} type="radio" value=2>C
+              <input name={{student[3]}} type="radio" value=1>D
+              <input name={{student[3]}} type="radio" value=0>F
+           </select></input></th>
         </tr>
         {% endfor %}
       </table>
+      <button>Submit</button>
+      </form>
+      {% endfor %}
   </main>
 </div>
 <footer>
