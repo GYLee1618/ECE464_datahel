@@ -243,7 +243,7 @@ class DBManager:
 		return output			
 
 	def get_class_info(self,cid):
-		cla = self.session.query(self.classes.cid,self.classes.name,self.classes.semester,self.classes.meeting_times,
+		cla = self.session.query(self.classes.course_code,self.classes.name,self.classes.semester,self.classes.meeting_times,
 								self.classes.department,self.classes.credits).filter(self.classes.cid==cid).one()
 		return cla
 
