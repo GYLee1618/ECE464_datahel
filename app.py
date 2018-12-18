@@ -430,8 +430,12 @@ def create_class():
 	if 'access' in session:
 		if session['access'] == 'admin':
 			info = dbm.new_class(course_code,name,desc,semester,meeting_times,department,credits,max_students)
-			teaching = dbm.change_teaching_u(info,prof)
-			return render_template("add_class_landing.html",info=info)
+			try:
+				teaching = dbm.change_teaching_u(info,prof)
+			except Exception, e:
+				dbm.delete_class(info)
+				return redirect("add_class") 
+			return render_template("add_class_landing.html",info=dbm.get_class_info(info))
 		else:
 			return redirect("401")
 	else:
