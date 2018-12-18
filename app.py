@@ -31,7 +31,7 @@ def home():
 			try:
 				return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],get_current_sem()))
 			except Exception,e:
-				return render_template("401.html",error=e)
+				return render_template("401.html" )
 		elif session['access'] == "professor":
 			try:
 				return render_template('faculty_home.html',schedule=dbm.get_faculty_schedule(session['uid'],get_current_sem()))
@@ -97,7 +97,7 @@ def students():
 			try:
 				return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],session['semester']))	
 			except Exception,e:
-				return render_template("401.html",error=e)
+				return render_template("401.html" )
 		else:
 			return redirect("/")
 	return render_template('index.html')
@@ -117,7 +117,7 @@ def student_login():
 		else:
 			return redirect("logout")
 	except:
-		return render_template("401.html",error=e)
+		return render_template("401.html" )
 
 @app.route("/grades")
 def studentGrades():
@@ -126,12 +126,12 @@ def studentGrades():
 			try:
 				return render_template('student_grades.html',grades=dbm.get_grades(session['uid']),gpa=dbm.get_gpa(session['uid']))
 			except Exception,e:
-				return render_template("401.html",error=e)
+				return render_template("401.html" )
 		if session['access'] == "professor":
 			try:
 				classes = dbm.get_faculty_schedule(session['uid'],get_current_sem())
 			except Exception,e:
-				return render_template("401.html",error=e)
+				return render_template("401.html" )
 			rosters = dict()
 			for cl in classes:
 				rosters[cl[1]] = dbm.get_roster(cl[0])
@@ -148,7 +148,7 @@ def studentSchedule():
 			try:
 				return render_template('student_scheduling.html',plan=dbm.get_plan(session['uid'],get_next_sem()),schedule=dbm.get_classes(get_next_sem()))
 			except Exception,e:
-				return render_template("401.html",error=e)
+				return render_template("401.html" )
 		else:
 			return redirect("/")
 	return render_template('index.html')
@@ -165,7 +165,7 @@ def drop_class():
 					try:
 						dbm.drop(session['uid'],cid)
 					except Exception,e:
-						return render_template("401.html",error=e)
+						return render_template("401.html" )
 					dropped_cids += [cid]
 			except(KeyError):
 				pass
@@ -175,7 +175,7 @@ def drop_class():
 				try:
 					class_info += [dbm.get_class_info(cid)]
 				except Exception,e:
-					return render_template("401.html",error=e)
+					return render_template("401.html" )
 			return render_template("dropped.html",class_info=class_info)
 		else:
 			return redirect("401")
@@ -194,7 +194,7 @@ def add_plan():
 					try:
 						dbm.plan(session['uid'],cid)
 					except Exception,e:
-						return render_template("401.html",error=e)
+						return render_template("401.html" )
 					planned_cids += [cid]
 			except(KeyError):
 				pass
@@ -204,7 +204,7 @@ def add_plan():
 				try:
 					class_info += [dbm.get_class_info(cid)]
 				except Exception,e:
-					return render_template("401.html",error=e)
+					return render_template("401.html" )
 			return render_template("planned.html",class_info=class_info)
 		else:
 			return redirect("401")
@@ -218,7 +218,7 @@ def enrol_plan():
 			try:
 				dbm.enrol_in_plan(session['uid'])
 			except Exception,e:
-				return render_template("401.html",error=e)
+				return render_template("401.html" )
 			return render_template("enrolled.html")
 		else:
 			redirect("401")
@@ -233,7 +233,7 @@ def faculty():
 			try:
 				return render_template('faculty_home.html',schedule=dbm.get_faculty_schedule(session['uid'],get_current_sem()))
 			except Exception,e:
-				return render_template("401.html",error=e)
+				return render_template("401.html" )
 		else:
 			return redirect("/")
 	return render_template('professor_login.html')
@@ -392,7 +392,7 @@ def create_admin():
 	else:
 		return redirect("home")
 
-@app.route("/add_classes")
+@app.route("/add_class")
 def add_class():
 	if 'access' in session:
 		if session['access'] == 'admin':
@@ -403,7 +403,7 @@ def add_class():
 		return redirect("home")
 
 
-@app.route("/create_classes", methods=['post'])
+@app.route("/create_class", methods=['post'])
 def create_class():
 	course_code = request.form['course_code']
 	name = request.form['name']
@@ -413,9 +413,13 @@ def create_class():
 	semester = "{} {}".format(semester,semyear)
 	meeting_times = request.form['meeting_times']
 	dept = request.form['department']
-	credits = request.form['credits']
 	try:
-		credits = int(credits)
+		credits = float(request.form['credits'])
+	except:
+		return redirect("add_class")
+
+	try:
+		credits = float(credits)
 	except:
 		return redirect("add_class")
 
@@ -429,7 +433,7 @@ def create_class():
 
 	if 'access' in session:
 		if session['access'] == 'admin':
-			info = dbm.new_class(course_code,name,desc,semester,meeting_times,department,credits,max_students)
+			info = dbm.new_class(course_code,name,desc,semester,meeting_times,dept,credits,max_students)
 			try:
 				teaching = dbm.change_teaching_u(info,prof)
 			except Exception, e:

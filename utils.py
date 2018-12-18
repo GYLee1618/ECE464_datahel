@@ -74,7 +74,13 @@ class DBManager:
 			return
 		uid, uname, email, password = self.new_user(ssn, name, address, DOB)
 		new_student = self.students(sid=None, uid=uid, major=major, graduation=grad)
-		self.session.add(new_student)
+		try:
+			self.session.add(new_student)
+		except:
+			obj = dbm.session.query(self.users).filter(self.users.uid==uid).one()
+			self.session.delete(obj)
+			self.session.commit()
+			raise ValueError
 		self.session.commit()
 		return uid, uname, email, password
 
@@ -86,7 +92,13 @@ class DBManager:
 			return
 		uid, uname, email, password = self.new_user(ssn, name, address, DOB)
 		new_professor = self.professors(pid=None, uid=uid, department=department, salary=salary)
-		self.session.add(new_professor)
+		try:
+			self.session.add(new_professor)
+		except:
+			obj = dbm.session.query(self.users).filter(self.users.uid==uid).one()
+			self.session.delete(obj)
+			self.session.commit()
+			raise ValueError
 		self.session.commit()
 		return uid, uname, email, password		
 
@@ -97,7 +109,13 @@ class DBManager:
 			self.session.commit()
 			return
 		uid, uname, email, password = self.new_user(ssn, name, address, DOB)
-		new_administrator = self.administrators(uid=uid)
+		try:
+			new_administrator = self.administrators(uid=uid)
+		except:
+			obj = dbm.session.query(self.users).filter(self.users.uid==uid).one()
+			self.session.delete(obj)
+			self.session.commit()
+			raise ValueError
 		self.session.add(new_administrator)
 		self.session.commit()
 		return uid, uname, email, password			
@@ -121,7 +139,7 @@ class DBManager:
 	def change_teaching_u(self,cid,uname):
 		teaching = self.session.query(self.teaching).join(self.classes).filter(self.teaching.cid==cid).one()
 		try:
-			teaching.pid = self.session.query(self.professors.pid).join(self.users).filter(self.users.uname==uname).one()
+			teaching.pid = self.session.query(self.professors.uid).select_from(self.professors).join(self.users).filter(self.users.uname==uname).one()[0]
 		except:
 			raise ValueError("No professor with username {}".format(uname))
 		self.session.commit()
