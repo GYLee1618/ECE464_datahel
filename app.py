@@ -405,21 +405,45 @@ def add_class():
 
 @app.route("/create_classes", methods=['post'])
 def create_class():
+	course_code = request.form['course_code']
 	name = request.form['name']
-	ssn = request.form['ssn']
+	desc = request.form['description']
+	semester = request.form['semester']
+	semyear = request.form['year']
+	semester = "{} {}".format(semester,semyear)
+	meeting_times = request.form['meeting_times']
+	dept = request.form['department']
+	credits = request.form['credits']
 	try:
-		dob = datetime.strptime(request.form['dob'],'%m-%d-%Y')
-		dob = datetime.strftime(dob,'%Y%m%d')
+		credits = int(credits)
 	except:
-		return redirect("add_admin")
-	address = request.form['address']
+		return redirect("add_class")
+
+	max_students = request.form['max_students']
+	try:
+		max_students = int(max_students)
+	except:
+		return redirect("add_class")
+	prof = request.form['prof']
+
+
 	if 'access' in session:
 		if session['access'] == 'admin':
-			info = dbm.new_administrator(ssn,name,address,dob)
-			return render_template("add_admin_landing.html",info=info)
+			info = dbm.new_class(course_code,name,desc,semester,meeting_times,department,credits,max_students)
+			teaching = dbm.change_teaching_u(info,prof)
+			return render_template("add_class_landing.html",info=info)
 		else:
 			return redirect("401")
 	else:
 		return redirect("home")
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
 	app.run('localhost',port=9001)
