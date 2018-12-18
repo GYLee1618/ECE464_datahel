@@ -28,13 +28,19 @@ def get_next_sem():
 def home():
 	if 'access' in session:
 		if session['access'] == "student":
-			return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],get_current_sem()))
+			try:
+				return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],get_current_sem()))
+			except Exception,e:
+				return render_template("error.html",error=e)
 		elif session['access'] == "professor":
-			return render_template('faculty_home.html',schedule=dbm.get_faculty_schedule(session['uid'],get_current_sem()))
+			try:
+				return render_template('faculty_home.html',schedule=dbm.get_faculty_schedule(session['uid'],get_current_sem()))
+			except Exception,e:
+				return redirect("logout")
 		elif session['access'] == "admin":
 			return render_template('admin_home.html')
 		else:
-			redirect("logout")
+			return redirect("logout")
 	else:
 		return render_template('index.html')
 
@@ -88,7 +94,10 @@ def logout():
 def students():
 	if 'uname' in session:
 		if session['access'] == "student":
-			return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],session['semester']))	
+			try:
+				return render_template('student_home.html',schedule=dbm.get_schedule(session['uid'],session['semester']))	
+			except Exception,e:
+				return render_template("error.html",error=e)
 		else:
 			return redirect("/")
 	return render_template('index.html')
@@ -108,15 +117,21 @@ def student_login():
 		else:
 			return redirect("logout")
 	except:
-		return redirect("logout")
+		return render_template("error.html",error=e)
 
 @app.route("/grades")
 def studentGrades():
 	if 'uname' in session:
 		if session['access'] == "student":
-			return render_template('student_grades.html',grades=dbm.get_grades(session['uid']),gpa=dbm.get_gpa(session['uid']))
+			try:
+				return render_template('student_grades.html',grades=dbm.get_grades(session['uid']),gpa=dbm.get_gpa(session['uid']))
+			except Exception,e:
+				return render_template("error.html",error=e)
 		if session['access'] == "professor":
-			classes = dbm.get_faculty_schedule(session['uid'],get_current_sem())
+			try:
+				classes = dbm.get_faculty_schedule(session['uid'],get_current_sem())
+			except Exception,e:
+				return render_template("error.html",error=e)
 			rosters = dict()
 			for cl in classes:
 				rosters[cl[1]] = dbm.get_roster(cl[0])
@@ -130,7 +145,10 @@ def studentGrades():
 def studentSchedule():
 	if 'uname' in session:
 		if session['access'] == "student":
-			return render_template('student_scheduling.html',plan=dbm.get_plan(session['uid'],get_next_sem()),schedule=dbm.get_classes(get_next_sem()))
+			try:
+				return render_template('student_scheduling.html',plan=dbm.get_plan(session['uid'],get_next_sem()),schedule=dbm.get_classes(get_next_sem()))
+			except Exception,e:
+				return render_template("error.html",error=e)
 		else:
 			return redirect("/")
 	return render_template('index.html')
@@ -144,14 +162,20 @@ def drop_class():
 		if session['access'] == 'student':
 			try:
 				for cid in cids:
-					dbm.drop(session['uid'],cid)
+					try:
+						dbm.drop(session['uid'],cid)
+					except Exception,e:
+						return render_template("error.html",error=e)
 					dropped_cids += [cid]
 			except(KeyError):
 				pass
 			except(ValueError):
 				pass
 			for cid in dropped_cids:
-				class_info += [dbm.get_class_info(cid)]
+				try:
+					class_info += [dbm.get_class_info(cid)]
+				except Exception,e:
+					return render_template("error.html",error=e)
 			return render_template("dropped.html",class_info=class_info)
 		else:
 			return redirect("401")
@@ -167,14 +191,20 @@ def add_plan():
 		if session['access'] == 'student':
 			try:
 				for cid in cids:
-					dbm.plan(session['uid'],cid)
+					try:
+						dbm.plan(session['uid'],cid)
+					except Exception,e:
+						return render_template("error.html",error=e)
 					planned_cids += [cid]
 			except(KeyError):
 				pass
 			except(ValueError):
 				pass
 			for cid in planned_cids:
-				class_info += [dbm.get_class_info(cid)]
+				try:
+					class_info += [dbm.get_class_info(cid)]
+				except Exception,e:
+					return render_template("error.html",error=e)
 			return render_template("planned.html",class_info=class_info)
 		else:
 			return redirect("401")
@@ -185,7 +215,10 @@ def add_plan():
 def enrol_plan():
 	if 'uid' in session:
 		if session['access'] == 'student':
-			dbm.enrol_in_plan(session['uid'])
+			try:
+				dbm.enrol_in_plan(session['uid'])
+			except Exception,e:
+				return render_template("error.html",error=e)
 			return render_template("enrolled.html")
 		else:
 			redirect("401")
@@ -197,7 +230,10 @@ def enrol_plan():
 def faculty():
 	if 'uname' in session:
 		if session['access'] == "professor":
-			return render_template('faculty_home.html',schedule=dbm.get_faculty_schedule(session['uid'],get_current_sem()))
+			try:
+				return render_template('faculty_home.html',schedule=dbm.get_faculty_schedule(session['uid'],get_current_sem()))
+			except Exception,e:
+				return render_template("error.html",error=e)
 		else:
 			return redirect("/")
 	return render_template('professor_login.html')

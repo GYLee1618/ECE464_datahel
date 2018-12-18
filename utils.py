@@ -145,6 +145,13 @@ class DBManager:
 
 		return roster
 
+	def delete_class(self,cid):
+		try:
+			obj = self.session.query(self.classes).filter(self.classes.cid).one()
+		except:
+			raise ValueError
+		self.session.delete(obj)
+
 	def change_grade(self,sid,cid,grade):
 		taking = self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.cid==cid).one()
 		taking.grade = grade
