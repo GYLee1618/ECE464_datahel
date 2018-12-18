@@ -118,6 +118,14 @@ class DBManager:
 		teaching.pid = pid
 		self.session.commit()
 
+	def change_teaching_u(self,cid,uname):
+		teaching = self.session.query(self.teaching).join(self.classes).filter(self.teaching.cid==cid).one()
+		try:
+			teaching.pid = self.session.query(self.professors.pid).join(self.users).filter(self.users.uname==uname).one()
+		except:
+			raise ValueError("No professor with username {}".format(uname))
+		self.session.commit()
+
 	def change_password(self, uid, old_pwd, new_pwd):
 		user = self.session.query(self.users).filter(self.users.uid==uid).one()
 		if not sha256_crypt.verify(old_pwd, user.password):
