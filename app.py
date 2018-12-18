@@ -291,7 +291,99 @@ def create_student():
 	else:
 		return redirect("home")
 
+@app.route("/add_prof")
+def add_professor():
+	if 'access' in session:
+		if session['access'] == 'admin':
+			return render_template("add_prof.html")
+		else:
+			return redirect("401")
+	else:
+		return redirect("home")
 
 
+@app.route("/create_prof", methods=['post'])
+def create_professor():
+	name = request.form['name']
+	ssn = request.form['ssn']
+	try:
+		dob = datetime.strptime(request.form['dob'],'%m-%d-%Y')
+		dob = datetime.strftime(dob,'%Y%m%d')
+	except:
+		return redirect("add_professor")
+	address = request.form['address']
+	department = request.form['department']
+	try:
+		salary = float(request.form['salary'])
+	except:
+		return redirect("add_professor")
+	if 'access' in session:
+		if session['access'] == 'admin':
+			info = dbm.new_professor(ssn,name,address,dob,department,salary)
+			return render_template("add_prof_landing.html",info=info)
+		else:
+			return redirect("401")
+	else:
+		return redirect("home")
+
+@app.route("/add_admin")
+def add_admin():
+	if 'access' in session:
+		if session['access'] == 'admin':
+			return render_template("add_admin.html")
+		else:
+			return redirect("401")
+	else:
+		return redirect("home")
+
+
+@app.route("/create_admin", methods=['post'])
+def create_admin():
+	name = request.form['name']
+	ssn = request.form['ssn']
+	try:
+		dob = datetime.strptime(request.form['dob'],'%m-%d-%Y')
+		dob = datetime.strftime(dob,'%Y%m%d')
+	except:
+		return redirect("add_admin")
+	address = request.form['address']
+	if 'access' in session:
+		if session['access'] == 'admin':
+			info = dbm.new_administrator(ssn,name,address,dob)
+			return render_template("add_admin_landing.html",info=info)
+		else:
+			return redirect("401")
+	else:
+		return redirect("home")
+
+@app.route("/add_classes")
+def add_class():
+	if 'access' in session:
+		if session['access'] == 'admin':
+			return render_template("add_class.html")
+		else:
+			return redirect("401")
+	else:
+		return redirect("home")
+
+
+@app.route("/create_classes", methods=['post'])
+def create_class():
+	name = request.form['name']
+	ssn = request.form['ssn']
+	try:
+		dob = datetime.strptime(request.form['dob'],'%m-%d-%Y')
+		dob = datetime.strftime(dob,'%Y%m%d')
+	except:
+		return redirect("add_admin")
+	address = request.form['address']
+	if 'access' in session:
+		if session['access'] == 'admin':
+			info = dbm.new_administrator(ssn,name,address,dob)
+			return render_template("add_admin_landing.html",info=info)
+		else:
+			return redirect("401")
+	else:
+		return redirect("home")
 if __name__ == '__main__':
 	app.run('localhost',port=9001)
