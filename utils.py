@@ -120,7 +120,7 @@ class DBManager:
 
 	def change_password(self, uid, old_pwd, new_pwd):
 		user = self.session.query(self.users).filter(self.users.uid==uid).one()
-		if sha256_crypt.verify(old_pwd, user.password):
+		if not sha256_crypt.verify(old_pwd, user.password):
 			raise ValueError('Wrong password')
 		user.password = sha256_crypt.encrypt(new_pwd)
 		self.session.commit()

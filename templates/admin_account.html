@@ -35,7 +35,26 @@
     </nav>
   </header>
   <main role="main">
-    <h1> Welcome, Admin </h1>
+    <h2>Account Management</h2>
+    <form action="change_pwd" method="POST">
+      {{error}}
+      <div class="wrap-input100 validate-input m-b-16" data-validate = "Old Password is required">
+        <input class="input100" type="password" name="oldpass" placeholder="Old Password">
+        <span class="focus-input100"></span>
+      </div>
+      
+      
+      <div class="wrap-input100 validate-input m-b-16" data-validate = "New Password is required">
+        <input class="input100" type="password" name="newpass" placeholder="New Password">
+        <span class="focus-input100"></span>
+      </div>
+      
+      <div class="container-login100-form-btn m-t-17">
+        <button class="login100-form-btn">
+          Change Password
+        </button>
+      </div>
+    </form>
   </main>
 </div>
 <footer>

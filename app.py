@@ -45,6 +45,8 @@ def account():
 			return render_template("account.html",error="")
 		elif session['access'] == 'professor': 
 			return render_template("professor_account.html",error="")
+		elif session['access'] == 'admin': 
+			return render_template("admin_account.html",error="")
 		else:
 			return redirect("/")
 	else:
@@ -55,9 +57,23 @@ def change_pwd():
 	if 'uid' in session:
 		try:
 			dbm.change_password(session['uid'],request.form['oldpass'],request.form['newpass'])
-			return render_template("account.html",error="Successfully Changed Password")
+			if session['access'] == 'student':
+				return render_template("account.html",error="Successfully Changed Password")
+			elif session['access'] == 'professor': 
+				return render_template("professor_account.html",error="Successfully Changed Password")
+			elif session['access'] == 'admin': 
+				return render_template("admin_account.html",error="Successfully Changed Password")
+			else:
+				return redirect("/")
 		except ValueError:
-			return render_template("account.html",error="Wrong Password")				
+			if session['access'] == 'student':
+				return render_template("account.html",error="Wrong Password")
+			elif session['access'] == 'professor': 
+				return render_template("professor_account.html",error="Wrong Password")
+			elif session['access'] == 'admin': 
+				return render_template("admin_account.html",error="Wrong Password")
+			else:
+				return redirect("/")
 	else:
 		return redirect("401")
 
@@ -229,18 +245,51 @@ def admin_login():
 	uname = request.form['username']
 	pwd = request.form['pass']
 	try:
-		uid = dbm.authenticate(uname,pwd,'adminstrators')
+		uid = dbm.authenticate(uname,pwd,'administrators')
 		if uid != None:
 			session['uname'] = uname
 			session['uid'] = uid 
 			session['access'] = "admin" 
-			return "You In admin"
+			return redirect("home")
 		else:
-			return "You done fucked up"
+			return redirect("home")
 	except:
-		return "You done fucked up"
+		return redirect("home")
+
+@app.route("/add_student")
+def add_student():
+	if 'access' in session:
+		if session['access'] == 'admin':
+			return render_template("add_student.html")
+		else:
+			return redirect("401")
+	else:
+		return redirect("home")
 
 
+@app.route("/create_student", methods=['post'])
+def create_student():
+	name = request.form['name']
+	ssn = request.form['ssn']
+	try:
+		dob = datetime.strptime(request.form['dob'],'%m-%d-%Y')
+		dob = datetime.strftime(dob,'%Y%m%d')
+	except:
+		return redirect("add_student")
+	address = request.form['address']
+	major = request.form['major']
+	try:
+		grad = int(request.form['grad'])
+	except:
+		return redirect("add_student")
+	if 'access' in session:
+		if session['access'] == 'admin':
+			info = dbm.new_student(ssn,name,address,dob,major,grad)
+			return render_template("add_student_landing.html",info=info)
+		else:
+			return redirect("401")
+	else:
+		return redirect("home")
 
 
 
