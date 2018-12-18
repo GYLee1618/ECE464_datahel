@@ -1,5 +1,5 @@
 CREATE TABLE users(uid int NOT NULL AUTO_INCREMENT,
-	ssn INT, 
+	ssn BIGINT, 
 	uname CHAR(30) NOT NULL,
 	password CHAR(128) NOT NULL,
 	name CHAR(30) NOT NULL,
