@@ -151,6 +151,7 @@ class DBManager:
 		except:
 			raise ValueError
 		self.session.delete(obj)
+		self.session.commit()
 
 	def change_grade(self,sid,cid,grade):
 		taking = self.session.query(self.taking).filter(self.taking.sid==sid).filter(self.taking.cid==cid).one()
